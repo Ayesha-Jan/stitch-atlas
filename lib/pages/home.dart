@@ -9,26 +9,42 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: Text("Stitch Atlas"),
         centerTitle: true,
-        backgroundColor: Colors.pinkAccent[100],
+        backgroundColor: Color(0xFFDCE7FB),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/designer');
-              },
-              child: Text("Go to Designer Page")
+      body: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+              image: DecorationImage(
+              image: AssetImage("assets/background.png"),
+              fit: BoxFit.cover,
+            ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/explorer');
-              },
-              child: Text("Go to Explorer Page"),
-          ),
-        ],
-      )
+        ),
+    // Foreground content
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/designer');
+                    },
+                    child: Text("Go to Designer Page"),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/explorer');
+                    },
+                    child: Text("Go to Explorer Page"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+      ),
     );
   }
 }
+
