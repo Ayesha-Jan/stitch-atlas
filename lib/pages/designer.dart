@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum Mode { crochet, knit, colour }
+
 class Designer extends StatefulWidget {
   const Designer({super.key});
 
@@ -8,6 +10,23 @@ class Designer extends StatefulWidget {
 }
 
 class _DesignerState extends State<Designer> {
+  Mode selectedMode = Mode.crochet;
+  int gridSize = 8;
+  bool gridGenerated = false;
+
+  dynamic selectedTool;
+  late List<List<dynamic>> gridData;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeGrid();
+  }
+
+  void _initializeGrid(){
+    gridData = List.generate(gridSize, (_) => List.generate(gridSize, (_) => null));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +69,31 @@ class _DesignerState extends State<Designer> {
                 Navigator.pushNamed(context, '/explorer');
               },
             ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                DropdownButton<Mode>(
+                  value: selectedMode,
+                  onChanged: (Mode? value) {
+                    setState(() => selectedMode = value!);
+                  },
+                  items: Mode.values.map((mode) {
+                    return DropdownMenuItem(
+                      value: mode,
+                      child: Text(mode.name.toUpperCase()),
+                    );
+                  }).toList(),
+                ),
+
+              ],
+            )
           ],
         ),
       ),
