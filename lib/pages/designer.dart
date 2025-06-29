@@ -14,10 +14,10 @@ class _DesignerState extends State<Designer> {
       appBar: AppBar(
         title: Text("Designer"),
         centerTitle: true,
-        backgroundColor: Colors.pink[100],
+        backgroundColor: Color(0xFFDCE7FB),
       ),
       drawer: Drawer(
-        backgroundColor: Colors.pink[100],
+        backgroundColor: Color(0xFFDCE7FB),
         child: Column(
           children: [
             DrawerHeader(

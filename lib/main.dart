@@ -12,7 +12,6 @@ class StitchAtlasApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'StitchAtlas',
-      theme: ThemeData(primarySwatch: Colors.teal),
       home: Home(),
       routes: {
         '/designer' :(context) => Designer(),

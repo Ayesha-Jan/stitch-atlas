@@ -7,7 +7,14 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Stitch Atlas"),
+        title: Text(
+          "Stitch Atlas",
+          style: TextStyle(
+            fontSize: 30,
+            color: Color(0xFFEA467E),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Color(0xFFDCE7FB),
       ),
@@ -16,7 +23,7 @@ class Home extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
               image: DecorationImage(
-              image: AssetImage("assets/background.png"),
+              image: AssetImage("assets/images/background.png"),
               fit: BoxFit.cover,
             ),
           ),
@@ -30,14 +37,52 @@ class Home extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushNamed(context, '/designer');
                     },
-                    child: Text("Go to Designer Page"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFDCE7FB),
+                      foregroundColor: Color(0xFFEA467E),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 24,
+                        horizontal: 30
+                      ),
+                      minimumSize: Size(200, 70),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        side: BorderSide(
+                          color: Color(0xFFEA467E),
+                          width: 2
+                        )
+                      )
+                    ),
+                    child: Text(
+                      "Go to Designer Page",
+                      style: TextStyle(fontSize: 35),
+                    ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 200),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(context, '/explorer');
                     },
-                    child: Text("Go to Explorer Page"),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFDCE7FB),
+                        foregroundColor: Color(0xFFEA467E),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 24,
+                            horizontal: 30
+                        ),
+                        minimumSize: Size(200, 70),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: BorderSide(
+                                color: Color(0xFFEA467E),
+                                width: 2
+                            )
+                        )
+                    ),
+                    child: Text(
+                      "Go to Explorer Page",
+                      style: TextStyle(fontSize: 35),
+                    ),
                   ),
                 ],
               ),
