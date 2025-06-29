@@ -12,6 +12,7 @@ class Designer extends StatefulWidget {
 class _DesignerState extends State<Designer> {
   Mode selectedMode = Mode.crochet;
   int gridSize = 8;
+  int generatedGridSize = 8;
   bool gridGenerated = false;
 
   List<List<String>> grid = []; // 2D list to hold values (symbols or colors)
@@ -19,7 +20,8 @@ class _DesignerState extends State<Designer> {
 
   // Generates an empty grid
   void _generateGrid() {
-    grid = List.generate(gridSize, (_) => List.filled(gridSize, ""));
+    generatedGridSize = gridSize;
+    grid = List.generate(generatedGridSize, (_) => List.filled(generatedGridSize, ""));
     gridGenerated = true;
     setState(() {});
   }
@@ -153,7 +155,12 @@ class _DesignerState extends State<Designer> {
 
             // GENERATE GRID BUTTON
             ElevatedButton(
-              onPressed: _generateGrid,
+              onPressed: () {
+                setState(() {
+                  _generateGrid();  // create a new grid with current gridSize
+                  gridGenerated = true;
+                });
+              },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFDCE7FB),
                   foregroundColor: Color(0xFFEA467E),
@@ -184,13 +191,13 @@ class _DesignerState extends State<Designer> {
             if (gridGenerated)
               Expanded(
                 child: GridView.builder(
-                  itemCount: gridSize * gridSize,
+                  itemCount: generatedGridSize * generatedGridSize,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: gridSize,
+                    crossAxisCount: generatedGridSize,
                   ),
                   itemBuilder: (context, index) {
-                    final row = index ~/ gridSize;
-                    final col = index % gridSize;
+                    final row = index ~/ generatedGridSize;
+                    final col = index % generatedGridSize;
                     return GestureDetector(
                       onTap: () => _handleCellTap(row, col),
                       child: Container(
