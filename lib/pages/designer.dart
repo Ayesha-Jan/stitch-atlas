@@ -14,24 +14,34 @@ class _DesignerState extends State<Designer> {
   int gridSize = 8;
   bool gridGenerated = false;
 
-  dynamic selectedTool;
-  late List<List<dynamic>> gridData;
+  List<List<String>> grid = []; // 2D list to hold values (symbols or colors)
+  String selectedSymbol = "🧵"; // default stitch icon or color
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeGrid();
+  // Generates an empty grid
+  void _generateGrid() {
+    grid = List.generate(gridSize, (_) => List.filled(gridSize, ""));
+    gridGenerated = true;
+    setState(() {});
   }
 
-  void _initializeGrid(){
-    gridData = List.generate(gridSize, (_) => List.generate(gridSize, (_) => null));
+  // Handles a cell tap
+  void _handleCellTap(int row, int col) {
+    grid[row][col] = selectedSymbol;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Designer"),
+        title: Text(
+          "D E S I G N E R",
+          style: TextStyle(
+            fontSize: 28,
+            color: Color(0xFFEA467E),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Color(0xFFDCE7FB),
       ),
@@ -72,90 +82,106 @@ class _DesignerState extends State<Designer> {
           ],
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                DropdownButton<Mode>(
-                  value: selectedMode,
-                  onChanged: (Mode? value) {
-                    setState(() => selectedMode = value!);
-                  },
-                  items: Mode.values.map((mode) {
-                    return DropdownMenuItem(
-                      value: mode,
-                      child: Text(mode.name.toUpperCase()),
-                    );
-                  }).toList(),
-                ),
-                DropdownButton<int>(
-                  value: gridSize,
-                  onChanged: (int? value) {
-                    setState(() {
-                      gridSize = value!;
-                      _initializeGrid();
-                    });
-                  },
-                  items: [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30].map((size) {
-                    return DropdownMenuItem(value: size, child: Text('$size x $size'));
-                  }).toList(),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      gridGenerated = true;
-                      _initializeGrid();
-                    });
-                  },
-                  child: Text("Generate Grid"),
+
+      body: Container(
+        color: Color(0xFFFDDBE6),
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text("MODE:  "),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFDCE7FB),         // background color
+                      borderRadius: BorderRadius.circular(15), // rounded corners
+                    ),
+                    child: DropdownButton<Mode>(
+                      dropdownColor: Color(0xFFDCE7FB),
+                      value: selectedMode,
+                      onChanged: (mode) {
+                        if (mode != null) {
+                          selectedMode = mode;
+                          if (mode == Mode.crochet) {
+                            selectedSymbol = "🧵";
+                          } else if (mode == Mode.knit) {
+                            selectedSymbol = "🧶";
+                          } else {
+                            selectedSymbol = "🟥"; // color block
+                          }
+                          setState(() {});
+                        }
+                      },
+                      items: Mode.values.map((m) {
+                        return DropdownMenuItem(
+                          value: m,
+                          child: Text((m.toString().split('.').last).toUpperCase()),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                SizedBox(width: 80),
+
+                // GRID SIZE DROPDOWN
+                Text("GRID SIZE:  "),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDCE7FB),         // background color
+                    borderRadius: BorderRadius.circular(15), // rounded corners
+                  ),
+                  child: DropdownButton<int>(
+                    dropdownColor: Color(0xFFDCE7FB),
+                    value: gridSize,
+                    onChanged: (size) {
+                      if (size != null) {
+                        setState(() {
+                          gridSize = size;
+                        });
+                      }
+                    },
+                    items: [4, 6, 8, 10, 12]
+                        .map((s) => DropdownMenuItem(value: s, child: Text("$s x $s")))
+                        .toList(),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            if(gridGenerated) ...[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Select ${selectedMode == Mode.colour ? "Color" : "Stitch"}:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+
+            SizedBox(height: 20),
+
+            // GENERATE GRID BUTTON
+            ElevatedButton(
+              onPressed: _generateGrid,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFDCE7FB),
+                  foregroundColor: Color(0xFFEA467E),
+                  padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20,
+                  ),
+                  minimumSize: Size(200, 50),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                          color: Color(0xFFEA467E),
+                          width: 2
+                      )
+                  )
+              ),
+              child: Text(
+                "Generate Grid",
+                style: TextStyle(
+                  fontSize: 25,
                 ),
               ),
+            ),
 
-              SizedBox(height: 8),
+            SizedBox(height: 16),
 
-              selectedMode == Mode.colour
-              ? Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  for (String stitch in ["sc", "dc", "tr"])
-                    GestureDetector(
-                      onTap: () => setState(() => selectedTool = stitch),
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        margin: EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: selectedTool == stitch ? Colors.black : Colors.grey,
-                            width: 2,
-                          ),
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            'assets/stitches/$stitch.png',
-                            height: 30,
-                          ),
-                        ),
-                      )
-                    ),
-                ],
-              ):
-
-              SizedBox(height: 16),
-
+            // GRID
+            if (gridGenerated)
               Expanded(
                 child: GridView.builder(
                   itemCount: gridSize * gridSize,
@@ -163,39 +189,26 @@ class _DesignerState extends State<Designer> {
                     crossAxisCount: gridSize,
                   ),
                   itemBuilder: (context, index) {
-                    int row = index ~/ gridSize;
-                    int col = index % gridSize;
-                    var cell = gridData[row][col];
-
+                    final row = index ~/ gridSize;
+                    final col = index % gridSize;
                     return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          gridData[row][col] = selectedTool;
-                        });
-                      },
+                      onTap: () => _handleCellTap(row, col),
                       child: Container(
                         margin: EdgeInsets.all(1),
-                        decoration: BoxDecoration(
-                          color: selectedMode == Mode.colour
-                            ? (cell ?? Colors.white)
-                            : Colors.white,
-                          border: Border.all(color: Colors.black12),
+                        color: Colors.grey[200],
+                        child: Center(
+                          child: Text(
+                            grid[row][col],
+                            style: TextStyle(fontSize: 24),
+                          ),
                         ),
-                        child: selectedMode != Mode.colour && cell != null
-                          ? Center(
-                            child: Image.asset(
-                              'assets/stitches/$cell.png',
-                              height: 30,
-                            ),
-                          )
-                        : null,
                       ),
                     );
                   },
                 ),
               ),
             ],
-          ],
+          ),
         ),
       ),
     );

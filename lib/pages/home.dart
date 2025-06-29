@@ -8,9 +8,9 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Stitch Atlas",
+          "S T I T C H   A T L A S",
           style: TextStyle(
-            fontSize: 30,
+            fontSize: 28,
             color: Color(0xFFEA467E),
             fontWeight: FontWeight.bold,
           ),
