@@ -11,8 +11,15 @@ class Designer extends StatefulWidget {
 
 class _DesignerState extends State<Designer> {
   Mode selectedMode = Mode.crochet;
-  int gridSize = 8;
-  int generatedGridSize = 8;
+
+  final TextEditingController widthController = TextEditingController(text: "8");
+  final TextEditingController heightController = TextEditingController(text: "8");
+
+  int gridWidth = 8;
+  int gridHeight = 8;
+  int generatedWidth = 8;
+  int generatedHeight = 8;
+
   bool gridGenerated = false;
 
   List<List<String>> grid = []; // 2D list to hold values (symbols or colors)
@@ -20,8 +27,9 @@ class _DesignerState extends State<Designer> {
 
   // Generates an empty grid
   void _generateGrid() {
-    generatedGridSize = gridSize;
-    grid = List.generate(generatedGridSize, (_) => List.filled(generatedGridSize, ""));
+    generatedWidth = gridWidth;
+    generatedHeight = gridHeight;
+    grid = List.generate(generatedHeight, (_) => List.filled(generatedWidth, ""));
     gridGenerated = true;
     setState(() {});
   }
@@ -124,28 +132,54 @@ class _DesignerState extends State<Designer> {
                     ),
                   ),
 
-                SizedBox(width: 80),
+                SizedBox(width: 10),
 
                 // GRID SIZE DROPDOWN
                 Text("GRID SIZE:  "),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFDCE7FB),         // background color
-                    borderRadius: BorderRadius.circular(15), // rounded corners
-                  ),
-                  child: DropdownButton<int>(
-                    dropdownColor: Color(0xFFDCE7FB),
-                    value: gridSize,
-                    onChanged: (size) {
-                      if (size != null) {
-                        setState(() {
-                          gridSize = size;
-                        });
+
+                SizedBox(width: 10),
+                Text("W: "),
+                SizedBox(
+                  width: 50,
+                  child: TextField(
+                    controller: widthController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      filled: true,
+                      fillColor: Color(0xFFDCE7FB),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    ),
+                    onChanged: (value) {
+                      final parsed = int.tryParse(value);
+                      if (parsed != null && parsed >= 2 && parsed <= 100) {
+                        gridWidth = parsed;
                       }
                     },
-                    items: [4, 6, 8, 10, 12]
-                        .map((s) => DropdownMenuItem(value: s, child: Text("$s x $s")))
-                        .toList(),
+                  ),
+                ),
+
+                SizedBox(width: 10),
+                Text("H: "),
+                SizedBox(
+                  width: 50,
+                  child: TextField(
+                    controller: heightController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      filled: true,
+                      fillColor: Color(0xFFDCE7FB),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    ),
+                    onChanged: (value) {
+                      final parsed = int.tryParse(value);
+                      if (parsed != null && parsed >= 2 && parsed <= 100) {
+                        gridHeight = parsed;
+                      }
+                    },
                   ),
                 ),
               ],
@@ -191,13 +225,13 @@ class _DesignerState extends State<Designer> {
             if (gridGenerated)
               Expanded(
                 child: GridView.builder(
-                  itemCount: generatedGridSize * generatedGridSize,
+                  itemCount: generatedWidth * generatedHeight,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: generatedGridSize,
+                    crossAxisCount: generatedWidth,
                   ),
                   itemBuilder: (context, index) {
-                    final row = index ~/ generatedGridSize;
-                    final col = index % generatedGridSize;
+                    final row = index ~/ generatedWidth;
+                    final col = index % generatedWidth;
                     return GestureDetector(
                       onTap: () => _handleCellTap(row, col),
                       child: Container(
