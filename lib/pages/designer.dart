@@ -290,8 +290,7 @@ class _DesignerState extends State<Designer> {
               // GRID + MINIMAP ROW
               if (gridGenerated)
                 Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Stack(
                     children: [
                       // Main Grid with labels & zoom & scroll
                       Expanded(
@@ -395,41 +394,50 @@ class _DesignerState extends State<Designer> {
 
                       // Floating Minimap (bottom-left)
                       Positioned(
+                        top: 16,
                         left: 16,
-                        bottom: 16,
-                        child: Container(
-                          width: (generatedWidth * miniCellSize * 0.7).clamp(100, 200).toDouble(),
-                          padding: EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.white70,
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("Minimap", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                              SizedBox(height: 4),
-                              FittedBox(
-                                fit: BoxFit.contain,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(generatedHeight, (row) {
-                                    return Row(
+                        child: Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            constraints: BoxConstraints(maxWidth: 200, maxHeight: 200),
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white70,
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("Minimap", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                SizedBox(height: 4),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Column(
                                       mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(generatedWidth, (col) {
-                                        return Container(
-                                          width: miniCellSize,
-                                          height: miniCellSize,
-                                          margin: EdgeInsets.all(0.2),
-                                          color: grid[row][col].isEmpty ? Colors.grey[300] : Colors.pink[200],
+                                      children: List.generate(generatedHeight, (row) {
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: List.generate(generatedWidth, (col) {
+                                            return Container(
+                                              width: miniCellSize,
+                                              height: miniCellSize,
+                                              margin: EdgeInsets.all(0.2),
+                                              color: grid[row][col].isEmpty
+                                                  ? Colors.grey[300]
+                                                  : Colors.pink[200],
+                                            );
+                                          }),
                                         );
                                       }),
-                                    );
-                                  }),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
