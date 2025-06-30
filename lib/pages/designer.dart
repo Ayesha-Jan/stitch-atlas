@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 enum Mode { crochet, knit, colour }
 
@@ -22,9 +23,29 @@ class _DesignerState extends State<Designer> {
 
   bool gridGenerated = false;
 
-  List<List<String>> grid = []; // 2D list to hold values (symbols or colors)
-  String selectedSymbol = "🧵"; // default stitch icon or color
+  List<List<String>> grid = []; // 2D list to hold values (crochet_symbols or colors)
+  String selectedSymbol = "single crochet"; // default stitch icon or color
 
+  final List<Map<String, String>> crochetSymbols = [
+    {"name": "chain", "file": "assets/crochet_symbols/ch.svg"},
+    {"name": "slip stitch", "file": "assets/crochet_symbols/slst.svg"},
+    {"name": "single crochet", "file": "assets/crochet_symbols/sc.svg"},
+    {"name": "half double crochet", "file": "assets/crochet_symbols/hdc.svg"},
+    {"name": "double crochet", "file": "assets/crochet_symbols/dc.svg"},
+    {"name": "treble crochet", "file": "assets/crochet_symbols/tc.svg"},
+    {"name": "double treble crochet", "file": "assets/crochet_symbols/dtc.svg"},
+    {"name": "single crochet 2 together", "file": "assets/crochet_symbols/sc2tog.svg"},
+    {"name": "single crochet 3 together", "file": "assets/crochet_symbols/sc3tog.svg"},
+    {"name": "double crochet 2 together", "file": "assets/crochet_symbols/dc2tog.svg"},
+    {"name": "double crochet 3 together", "file": "assets/crochet_symbols/dc3tog.svg"},
+    {"name": "puff", "file": "assets/crochet_symbols/puff.svg"},
+    {"name": "5 double crochet popcorn", "file": "assets/crochet_symbols/5dc-popcorn.svg"},
+    {"name": "chain 3 picot", "file": "assets/crochet_symbols/ch3-picot.svg"},
+    {"name": "front post double crochet", "file": "assets/crochet_symbols/fpdc.svg"},
+    {"name": "back post double crochet", "file": "assets/crochet_symbols/bpdc.svg"},
+    {"name": "back loop only", "file": "assets/crochet_symbols/blo.svg"},
+    {"name": "front loop only", "file": "assets/crochet_symbols/flo.svg"},
+  ];
 
   double zoom = 1.0; // Zoom scale for InteractiveViewer
 
@@ -43,7 +64,10 @@ class _DesignerState extends State<Designer> {
 
   // Handles a cell tap
   void _handleCellTap(int row, int col) {
-    grid[row][col] = selectedSymbol;
+    if (row < 0 || row >= grid.length || col < 0 || col >= grid[row].length) return;
+    // Store just the symbol name, not the file path
+    final symbol = crochetSymbols.firstWhere((s) => s["name"] == selectedSymbol);
+    grid[row][col] = symbol["name"]!;
     setState(() {});
   }
 
@@ -81,10 +105,10 @@ class _DesignerState extends State<Designer> {
         child: Column(
           children: [
             DrawerHeader(
-              child: Icon(
-                Icons.favorite,
-                size: 48,
-              )
+                child: Icon(
+                  Icons.favorite,
+                  size: 48,
+                )
             ),
             ListTile(
               leading: Icon(Icons.home),
@@ -138,15 +162,15 @@ class _DesignerState extends State<Designer> {
                       value: selectedMode,
                       onChanged: (mode) {
                         if (mode != null) {
-                          selectedMode = mode;
-                          if (mode == Mode.crochet) {
-                            selectedSymbol = "🧵";
-                          } else if (mode == Mode.knit) {
-                            selectedSymbol = "🧶";
-                          } else {
-                            selectedSymbol = "🟥";
-                          }
-                          setState(() {});
+                          setState(() {
+                            selectedMode = mode;
+                            // Default to first crochet symbol if in crochet mode
+                            if (mode == Mode.crochet && crochetSymbols.isNotEmpty) {
+                              selectedSymbol = crochetSymbols[0]["name"]!;
+                            } else {
+                              selectedSymbol = "";
+                            }
+                          });
                         }
                       },
                       items: Mode.values.map((m) {
@@ -228,41 +252,41 @@ class _DesignerState extends State<Designer> {
 
               SizedBox(height: 20),
 
-            // GENERATE GRID BUTTON
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _generateGrid();  // create a new grid with current gridSize
-                  gridGenerated = true;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFDCE7FB),
-                  foregroundColor: Color(0xFFEA467E),
-                  padding: EdgeInsets.symmetric(
+              // GENERATE GRID BUTTON
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _generateGrid();  // create a new grid with current gridSize
+                    gridGenerated = true;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFDCE7FB),
+                    foregroundColor: Color(0xFFEA467E),
+                    padding: EdgeInsets.symmetric(
                       vertical: 10,
                       horizontal: 20,
+                    ),
+                    minimumSize: Size(200, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(
+                            color: Color(0xFFEA467E),
+                            width: 2
+                        )
+                    )
+                ),
+                child: Text(
+                  "Generate Grid",
+                  style: TextStyle(
+                    fontSize: 25,
                   ),
-                  minimumSize: Size(200, 50),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                          color: Color(0xFFEA467E),
-                          width: 2
-                      )
-                  )
-              ),
-              child: Text(
-                "Generate Grid",
-                style: TextStyle(
-                  fontSize: 25,
                 ),
               ),
-            ),
 
-            SizedBox(height: 12),
+              SizedBox(height: 12),
 
-            // GRID
+              // GRID
               if (gridGenerated)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -347,10 +371,16 @@ class _DesignerState extends State<Designer> {
                                             margin: EdgeInsets.all(1),
                                             color: Colors.grey[200],
                                             alignment: Alignment.center,
-                                            child: Text(
-                                              grid[row][col],
-                                              style: TextStyle(fontSize: 18),
-                                            ),
+                                            child: grid[row][col].isEmpty
+                                                ? SizedBox.shrink()
+                                                : SvgPicture.asset(
+                                                    crochetSymbols.firstWhere(
+                                                          (s) => s["name"] == grid[row][col],
+                                                      orElse: () => {"file": ""}, // fallback
+                                                    )["file"]!,
+                                                    width: cellSize * 0.8,
+                                                    height: cellSize * 0.8,
+                                                ),
                                           ),
                                         );
                                       }),
@@ -442,6 +472,36 @@ class _DesignerState extends State<Designer> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+
+              if (selectedMode == Mode.crochet)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: DropdownButton<String>(
+                    value: crochetSymbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,                    hint: Text("Select a stitch"),
+                    onChanged: (value) {
+                      final symbol = crochetSymbols.firstWhere((s) => s["name"] == value);
+                      setState(() {
+                        selectedSymbol = symbol["name"]!; // this is the SVG path
+                      });
+                    },
+                    items: crochetSymbols.map((symbol) {
+                      return DropdownMenuItem<String>(
+                        value: symbol["name"],
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              symbol["file"]!,
+                              width: 24,
+                              height: 24,
+                            ),
+                            SizedBox(width: 8),
+                            Text(symbol["name"]!),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
             ],
