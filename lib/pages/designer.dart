@@ -25,12 +25,19 @@ class _DesignerState extends State<Designer> {
   List<List<String>> grid = []; // 2D list to hold values (symbols or colors)
   String selectedSymbol = "🧵"; // default stitch icon or color
 
+
+  double zoom = 1.0; // Zoom scale for InteractiveViewer
+
+  final TransformationController _transformationController = TransformationController();
+
   // Generates an empty grid
   void _generateGrid() {
     generatedWidth = gridWidth;
     generatedHeight = gridHeight;
     grid = List.generate(generatedHeight, (_) => List.filled(generatedWidth, ""));
     gridGenerated = true;
+    zoom = 1.0;
+    _transformationController.value = Matrix4.identity();
     setState(() {});
   }
 
@@ -41,7 +48,21 @@ class _DesignerState extends State<Designer> {
   }
 
   @override
+  void dispose() {
+    widthController.dispose();
+    heightController.dispose();
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Size of each grid cell in main grid
+    final double cellSize = 30;
+
+    // Size of each cell in minimap (smaller)
+    final double miniCellSize = 6;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -141,7 +162,7 @@ class _DesignerState extends State<Designer> {
 
               SizedBox(height: 16),
 
-// Grid Size Row (label)
+              // Grid Size Row (label)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -154,7 +175,7 @@ class _DesignerState extends State<Designer> {
 
               SizedBox(height: 10),
 
-// Rows & Columns Inputs
+              // Rows & Columns Inputs
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -239,104 +260,251 @@ class _DesignerState extends State<Designer> {
               ),
             ),
 
-            SizedBox(height: 16),
+            SizedBox(height: 12),
 
             // GRID
-            if (gridGenerated)
-              Expanded(
-                child: InteractiveViewer(
-                  constrained: false,
-                  boundaryMargin: EdgeInsets.all(20),
-                  minScale: 0.2,
-                  maxScale: 5.0,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // TOP ROW: scrollable horizontally
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(width: 32, height: 32), // top-left corner
-                              ...List.generate(generatedWidth, (col) =>
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                  ),
-                              ),
-                              const SizedBox(width: 32, height: 32), // top-right corner
-                            ],
-                          ),
-                        ),
-
-                        // MIDDLE ROWS: left labels + grid + right labels
-                        ...List.generate(generatedHeight, (row) {
-                          return Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Flip the row number counting bottom to top:
-                              Container(
-                                width: 32,
-                                height: 30,
-                                alignment: Alignment.center,
-                                child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              ...List.generate(generatedWidth, (col) {
-                                return GestureDetector(
-                                  onTap: () => _handleCellTap(row, col),
-                                  child: Container(
-                                    width: 30,
-                                    height: 30,
-                                    margin: EdgeInsets.all(1),
-                                    color: Colors.grey[200],
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      grid[row][col],
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                );
-                              }),
-                              // Flip the row number counting bottom to top:
-                              Container(
-                                width: 32,
-                                height: 30,
-                                alignment: Alignment.center,
-                                child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ],
-                          );
-                        }),
-
-                        // BOTTOM ROW: scrollable horizontally
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(width: 32, height: 32), // bottom-left corner
-                              ...List.generate(generatedWidth, (col) =>
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                  ),
-                              ),
-                              const SizedBox(width: 32, height: 32), // bottom-right corner
-                            ],
-                          ),
-                        ),
-                      ],
+              if (gridGenerated)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Zoom:"),
+                    Slider(
+                      value: zoom,
+                      min: 0.2,
+                      max: 5.0,
+                      divisions: 48,
+                      label: zoom.toStringAsFixed(2),
+                      onChanged: (value) {
+                        setState(() {
+                          zoom = value;
+                          // Also update InteractiveViewer matrix scale
+                          _transformationController.value = Matrix4.identity()..scale(zoom);
+                        });
+                      },
                     ),
+                  ],
+                ),
+
+              SizedBox(height: 12),
+
+              // GRID + MINIMAP ROW
+              if (gridGenerated)
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Main Grid with labels & zoom & scroll
+                      Expanded(
+                        child: InteractiveViewer(
+                          constrained: false,
+                          boundaryMargin: EdgeInsets.all(20),
+                          minScale: 0.2,
+                          maxScale: 5.0,
+                          scaleEnabled: false, // zoom controlled by slider now
+                          transformationController: _transformationController,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // TOP ROW: scrollable horizontally
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SizedBox(width: 32, height: 32), // top-left corner
+                                      ...List.generate(
+                                        generatedWidth,
+                                            (col) => Container(
+                                          width: cellSize,
+                                          height: cellSize,
+                                          alignment: Alignment.center,
+                                          child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 32, height: 32), // top-right corner
+                                    ],
+                                  ),
+                                ),
+
+                                // MIDDLE ROWS: left labels + grid + right labels
+                                ...List.generate(generatedHeight, (row) {
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 32,
+                                        height: cellSize,
+                                        alignment: Alignment.center,
+                                        child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      ),
+                                      ...List.generate(generatedWidth, (col) {
+                                        return GestureDetector(
+                                          onTap: () => _handleCellTap(row, col),
+                                          child: Container(
+                                            width: cellSize,
+                                            height: cellSize,
+                                            margin: EdgeInsets.all(1),
+                                            color: Colors.grey[200],
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              grid[row][col],
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                      Container(
+                                        width: 32,
+                                        height: cellSize,
+                                        alignment: Alignment.center,
+                                        child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      ),
+                                    ],
+                                  );
+                                }),
+
+                                // BOTTOM ROW: scrollable horizontally
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SizedBox(width: 32, height: 32), // bottom-left corner
+                                      ...List.generate(
+                                        generatedWidth,
+                                            (col) => Container(
+                                          width: cellSize,
+                                          height: cellSize,
+                                          alignment: Alignment.center,
+                                          child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 32, height: 32), // bottom-right corner
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 12),
+
+                      // MINIMAP
+                      Container(
+                        width: (generatedWidth * miniCellSize) + 64,
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          children: [
+                            Text("Minimap", style: TextStyle(fontWeight: FontWeight.bold)),
+                            SizedBox(height: 8),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Top numbers row for minimap
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(width: 16), // corner spacing
+                                      ...List.generate(
+                                        generatedWidth,
+                                            (col) => Container(
+                                          width: miniCellSize,
+                                          height: miniCellSize,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '${col + 1}',
+                                            style: TextStyle(fontSize: 8),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 16),
+                                    ],
+                                  ),
+
+                                  ...List.generate(generatedHeight, (row) {
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Left number label
+                                        Container(
+                                          width: 16,
+                                          height: miniCellSize,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '${generatedHeight - row}',
+                                            style: TextStyle(fontSize: 8),
+                                          ),
+                                        ),
+                                        // Mini grid cells
+                                        ...List.generate(generatedWidth, (col) {
+                                          return Container(
+                                            width: miniCellSize,
+                                            height: miniCellSize,
+                                            margin: EdgeInsets.all(0.5),
+                                            color: grid[row][col].isEmpty
+                                                ? Colors.grey[300]
+                                                : Colors.pink[200],
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              grid[row][col],
+                                              style: TextStyle(fontSize: 6),
+                                            ),
+                                          );
+                                        }),
+                                        // Right number label
+                                        Container(
+                                          width: 16,
+                                          height: miniCellSize,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '${generatedHeight - row}',
+                                            style: TextStyle(fontSize: 8),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+
+                                  // Bottom numbers row for minimap
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(width: 16),
+                                      ...List.generate(
+                                        generatedWidth,
+                                            (col) => Container(
+                                          width: miniCellSize,
+                                          height: miniCellSize,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '${col + 1}',
+                                            style: TextStyle(fontSize: 8),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 16),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
             ],
           ),
         ),
