@@ -99,13 +99,18 @@ class _DesignerState extends State<Designer> {
           padding: EdgeInsets.all(12),
           child: Column(
             children: [
+              // Mode Row (centered)
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("MODE:  "),
+                  Text(
+                    "MODE:  ",
+                    style: TextStyle(fontSize: 16),
+                  ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFFDCE7FB),         // background color
-                      borderRadius: BorderRadius.circular(15), // rounded corners
+                      color: Color(0xFFDCE7FB),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: DropdownButton<Mode>(
                       dropdownColor: Color(0xFFDCE7FB),
@@ -118,7 +123,7 @@ class _DesignerState extends State<Designer> {
                           } else if (mode == Mode.knit) {
                             selectedSymbol = "🧶";
                           } else {
-                            selectedSymbol = "🟥"; // color block
+                            selectedSymbol = "🟥";
                           }
                           setState(() {});
                         }
@@ -131,61 +136,76 @@ class _DesignerState extends State<Designer> {
                       }).toList(),
                     ),
                   ),
+                ],
+              ),
 
-                SizedBox(width: 10),
+              SizedBox(height: 16),
 
-                // GRID SIZE DROPDOWN
-                Text("GRID SIZE:  "),
-
-                SizedBox(width: 10),
-                Text("W: "),
-                SizedBox(
-                  width: 50,
-                  child: TextField(
-                    controller: widthController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      filled: true,
-                      fillColor: Color(0xFFDCE7FB),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    ),
-                    onChanged: (value) {
-                      final parsed = int.tryParse(value);
-                      if (parsed != null && parsed >= 2 && parsed <= 100) {
-                        gridWidth = parsed;
-                      }
-                    },
+// Grid Size Row (label)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "GRID SIZE:",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                ),
+                ],
+              ),
 
-                SizedBox(width: 10),
-                Text("H: "),
-                SizedBox(
-                  width: 50,
-                  child: TextField(
-                    controller: heightController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      filled: true,
-                      fillColor: Color(0xFFDCE7FB),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              SizedBox(height: 10),
+
+// Rows & Columns Inputs
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("ROWS: "),
+                  SizedBox(
+                    width: 50,
+                    child: TextField(
+                      controller: heightController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        filled: true,
+                        fillColor: Color(0xFFDCE7FB),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      ),
+                      onChanged: (value) {
+                        final parsed = int.tryParse(value);
+                        if (parsed != null && parsed >= 2 && parsed <= 100) {
+                          gridHeight = parsed;
+                        }
+                      },
                     ),
-                    onChanged: (value) {
-                      final parsed = int.tryParse(value);
-                      if (parsed != null && parsed >= 2 && parsed <= 100) {
-                        gridHeight = parsed;
-                      }
-                    },
                   ),
-                ),
-              ],
-            ),
+                  SizedBox(width: 20),
+                  Text("COLUMNS: "),
+                  SizedBox(
+                    width: 50,
+                    child: TextField(
+                      controller: widthController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        filled: true,
+                        fillColor: Color(0xFFDCE7FB),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      ),
+                      onChanged: (value) {
+                        final parsed = int.tryParse(value);
+                        if (parsed != null && parsed >= 2 && parsed <= 100) {
+                          gridWidth = parsed;
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
 
-            SizedBox(height: 20),
+
+              SizedBox(height: 20),
 
             // GENERATE GRID BUTTON
             ElevatedButton(
@@ -224,28 +244,97 @@ class _DesignerState extends State<Designer> {
             // GRID
             if (gridGenerated)
               Expanded(
-                child: GridView.builder(
-                  itemCount: generatedWidth * generatedHeight,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: generatedWidth,
-                  ),
-                  itemBuilder: (context, index) {
-                    final row = index ~/ generatedWidth;
-                    final col = index % generatedWidth;
-                    return GestureDetector(
-                      onTap: () => _handleCellTap(row, col),
-                      child: Container(
-                        margin: EdgeInsets.all(1),
-                        color: Colors.grey[200],
-                        child: Center(
-                          child: Text(
-                            grid[row][col],
-                            style: TextStyle(fontSize: 24),
+                child: InteractiveViewer(
+                  constrained: false,
+                  boundaryMargin: EdgeInsets.all(20),
+                  minScale: 0.2,
+                  maxScale: 5.0,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // TOP ROW: scrollable horizontally
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(width: 32, height: 32), // top-left corner
+                              ...List.generate(generatedWidth, (col) =>
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  ),
+                              ),
+                              const SizedBox(width: 32, height: 32), // top-right corner
+                            ],
                           ),
                         ),
-                      ),
-                    );
-                  },
+
+                        // MIDDLE ROWS: left labels + grid + right labels
+                        ...List.generate(generatedHeight, (row) {
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Flip the row number counting bottom to top:
+                              Container(
+                                width: 32,
+                                height: 30,
+                                alignment: Alignment.center,
+                                child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              ...List.generate(generatedWidth, (col) {
+                                return GestureDetector(
+                                  onTap: () => _handleCellTap(row, col),
+                                  child: Container(
+                                    width: 30,
+                                    height: 30,
+                                    margin: EdgeInsets.all(1),
+                                    color: Colors.grey[200],
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      grid[row][col],
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                );
+                              }),
+                              // Flip the row number counting bottom to top:
+                              Container(
+                                width: 32,
+                                height: 30,
+                                alignment: Alignment.center,
+                                child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          );
+                        }),
+
+                        // BOTTOM ROW: scrollable horizontally
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(width: 32, height: 32), // bottom-left corner
+                              ...List.generate(generatedWidth, (col) =>
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  ),
+                              ),
+                              const SizedBox(width: 32, height: 32), // bottom-right corner
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
