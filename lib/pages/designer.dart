@@ -300,20 +300,20 @@ class _DesignerState extends State<Designer> {
                           boundaryMargin: EdgeInsets.all(20),
                           minScale: 0.2,
                           maxScale: 5.0,
-                          scaleEnabled: false, // zoom controlled by slider now
+                          scaleEnabled: false,
                           transformationController: _transformationController,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // TOP ROW: scrollable horizontally
+                                // Top column labels
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const SizedBox(width: 32, height: 32), // top-left corner
+                                      const SizedBox(width: 32, height: 32),
                                       ...List.generate(
                                         generatedWidth,
                                             (col) => Container(
@@ -323,7 +323,7 @@ class _DesignerState extends State<Designer> {
                                           child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
                                         ),
                                       ),
-                                      const SizedBox(width: 32, height: 32), // top-right corner
+                                      const SizedBox(width: 32, height: 32),
                                     ],
                                   ),
                                 ),
@@ -393,113 +393,44 @@ class _DesignerState extends State<Designer> {
 
                       SizedBox(width: 12),
 
-                      // MINIMAP
-                      Container(
-                        width: (generatedWidth * miniCellSize) + 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white70,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          children: [
-                            Text("Minimap", style: TextStyle(fontWeight: FontWeight.bold)),
-                            SizedBox(height: 8),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Top numbers row for minimap
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(width: 16), // corner spacing
-                                      ...List.generate(
-                                        generatedWidth,
-                                            (col) => Container(
-                                          width: miniCellSize,
-                                          height: miniCellSize,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            '${col + 1}',
-                                            style: TextStyle(fontSize: 8),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 16),
-                                    ],
-                                  ),
-
-                                  ...List.generate(generatedHeight, (row) {
+                      // Floating Minimap (bottom-left)
+                      Positioned(
+                        left: 16,
+                        bottom: 16,
+                        child: Container(
+                          width: (generatedWidth * miniCellSize * 0.7).clamp(100, 200).toDouble(),
+                          padding: EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white70,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Minimap", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                              SizedBox(height: 4),
+                              FittedBox(
+                                fit: BoxFit.contain,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(generatedHeight, (row) {
                                     return Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        // Left number label
-                                        Container(
-                                          width: 16,
-                                          height: miniCellSize,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            '${generatedHeight - row}',
-                                            style: TextStyle(fontSize: 8),
-                                          ),
-                                        ),
-                                        // Mini grid cells
-                                        ...List.generate(generatedWidth, (col) {
-                                          return Container(
-                                            width: miniCellSize,
-                                            height: miniCellSize,
-                                            margin: EdgeInsets.all(0.5),
-                                            color: grid[row][col].isEmpty
-                                                ? Colors.grey[300]
-                                                : Colors.pink[200],
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              grid[row][col],
-                                              style: TextStyle(fontSize: 6),
-                                            ),
-                                          );
-                                        }),
-                                        // Right number label
-                                        Container(
-                                          width: 16,
-                                          height: miniCellSize,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            '${generatedHeight - row}',
-                                            style: TextStyle(fontSize: 8),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }),
-
-                                  // Bottom numbers row for minimap
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(width: 16),
-                                      ...List.generate(
-                                        generatedWidth,
-                                            (col) => Container(
+                                      children: List.generate(generatedWidth, (col) {
+                                        return Container(
                                           width: miniCellSize,
                                           height: miniCellSize,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            '${col + 1}',
-                                            style: TextStyle(fontSize: 8),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 16),
-                                    ],
-                                  ),
-                                ],
+                                          margin: EdgeInsets.all(0.2),
+                                          color: grid[row][col].isEmpty ? Colors.grey[300] : Colors.pink[200],
+                                        );
+                                      }),
+                                    );
+                                  }),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ],
