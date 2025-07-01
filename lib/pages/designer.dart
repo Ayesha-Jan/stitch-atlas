@@ -15,6 +15,7 @@ class _DesignerState extends State<Designer> {
 
   final TextEditingController widthController = TextEditingController(text: "8");
   final TextEditingController heightController = TextEditingController(text: "8");
+  final TransformationController _transformationController = TransformationController();
 
   int gridWidth = 8;
   int gridHeight = 8;
@@ -49,8 +50,6 @@ class _DesignerState extends State<Designer> {
 
   double zoom = 1.0; // Zoom scale for InteractiveViewer
 
-  final TransformationController _transformationController = TransformationController();
-
   // Generates an empty grid
   void _generateGrid() {
     generatedWidth = gridWidth;
@@ -83,9 +82,6 @@ class _DesignerState extends State<Designer> {
   Widget build(BuildContext context) {
     // Size of each grid cell in main grid
     final double cellSize = 30;
-
-    // Size of each cell in minimap (smaller)
-    final double miniCellSize = 6;
 
     return Scaffold(
       appBar: AppBar(
@@ -419,58 +415,6 @@ class _DesignerState extends State<Designer> {
                           ),
                         ),
                       ),
-
-                      SizedBox(width: 12),
-
-                      // Floating Minimap (bottom-left)
-                      Positioned(
-                        top: 16,
-                        left: 16,
-                        child: Material(
-                          elevation: 4,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            constraints: BoxConstraints(maxWidth: 200, maxHeight: 200),
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.white70,
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text("Minimap", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                SizedBox(height: 4),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.vertical,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(generatedHeight, (row) {
-                                        return Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: List.generate(generatedWidth, (col) {
-                                            return Container(
-                                              width: miniCellSize,
-                                              height: miniCellSize,
-                                              margin: EdgeInsets.all(0.2),
-                                              color: grid[row][col].isEmpty
-                                                  ? Colors.grey[300]
-                                                  : Colors.pink[200],
-                                            );
-                                          }),
-                                        );
-                                      }),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -478,38 +422,44 @@ class _DesignerState extends State<Designer> {
               if (selectedMode == Mode.crochet)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: DropdownButton<String>(
-                    value: crochetSymbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,
-                    hint: Text("Select a stitch"),
-                    onChanged: (value) {
-                      final symbol = crochetSymbols.firstWhere((s) => s["name"] == value);
-                      setState(() {
-                        selectedSymbol = symbol["name"]!; // this is the SVG path
-                      });
-                    },
-                    items: crochetSymbols.map((symbol) {
-                      return DropdownMenuItem<String>(
-                        value: symbol["name"],
-                        child: Container(
-                          color: Color(0xFFDCE7FB),
-                          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: SvgPicture.asset(
-                                  symbol["file"]!,
-                                  fit: BoxFit.contain,
+                  child: Container(
+                    decoration: BoxDecoration(
+                    color: Color(0xFFDCE7FB),
+                    borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: DropdownButton<String>(
+                      value: crochetSymbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,
+                      hint: Text("Select a stitch"),
+                      onChanged: (value) {
+                        final symbol = crochetSymbols.firstWhere((s) => s["name"] == value);
+                        setState(() {
+                          selectedSymbol = symbol["name"]!; // this is the SVG path
+                        });
+                      },
+                      items: crochetSymbols.map((symbol) {
+                        return DropdownMenuItem<String>(
+                          value: symbol["name"],
+                          child: Container(
+                            color: Color(0xFFDCE7FB),
+                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: SvgPicture.asset(
+                                    symbol["file"]!,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 8),
-                              Text(symbol["name"]!),
-                            ],
+                                SizedBox(width: 8),
+                                Text(symbol["name"]!),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
             ],
