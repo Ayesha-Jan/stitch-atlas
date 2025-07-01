@@ -16,7 +16,7 @@ class StitchAtlasApp extends StatelessWidget {
       routes: {
         '/designer' :(context) => Designer(),
         '/explorer' :(context) => Explorer(),
-        '/home' :(context) => Home()
+        '/home' :(context) => Home(),
       },
     );
   }

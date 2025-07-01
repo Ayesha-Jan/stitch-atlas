@@ -135,6 +135,43 @@ class _DesignerState extends State<Designer> {
     }
   }
 
+  Widget buildSymbolDropdown(List<Map<String, String>> symbols, String modeName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFDCE7FB),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: DropdownButton<String>(
+          value: symbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,
+          hint: Text("Select a $modeName stitch"),
+          onChanged: (value) {
+            final symbol = symbols.firstWhere((s) => s["name"] == value);
+            setState(() {
+              selectedSymbol = symbol["name"]!;
+            });
+          },
+          items: symbols.map((symbol) {
+            return DropdownMenuItem<String>(
+              value: symbol["name"],
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: SvgPicture.asset(symbol["file"]!),
+                  ),
+                  SizedBox(width: 8),
+                  Text(symbol["name"]!),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -540,94 +577,10 @@ class _DesignerState extends State<Designer> {
                 ),
 
               if (selectedMode == Mode.crochet)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                    color: Color(0xFFDCE7FB),
-                    borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: DropdownButton<String>(
-                      value: crochetSymbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,
-                      hint: Text("Select a stitch"),
-                      onChanged: (value) {
-                        final symbol = crochetSymbols.firstWhere((s) => s["name"] == value);
-                        setState(() {
-                          selectedSymbol = symbol["name"]!; // this is the SVG path
-                        });
-                      },
-                      items: crochetSymbols.map((symbol) {
-                        return DropdownMenuItem<String>(
-                          value: symbol["name"],
-                          child: Container(
-                            color: Color(0xFFDCE7FB),
-                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: SvgPicture.asset(
-                                    symbol["file"]!,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                Text(symbol["name"]!),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-
-              if (selectedMode == Mode.knit)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFDCE7FB),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: DropdownButton<String>(
-                      value: knitSymbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,
-                      hint: Text("Select a stitch"),
-                      onChanged: (value) {
-                        final symbol = knitSymbols.firstWhere((s) => s["name"] == value);
-                        setState(() {
-                          selectedSymbol = symbol["name"]!; // this is the SVG path
-                        });
-                      },
-                      items: knitSymbols.map((symbol) {
-                        return DropdownMenuItem<String>(
-                          value: symbol["name"],
-                          child: Container(
-                            color: Color(0xFFDCE7FB),
-                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: SvgPicture.asset(
-                                    symbol["file"]!,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                Text(symbol["name"]!),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-
-              if (selectedMode == Mode.colour)
+                buildSymbolDropdown(crochetSymbols, "crochet")
+              else if (selectedMode == Mode.knit)
+                buildSymbolDropdown(knitSymbols, "knit")
+              else if (selectedMode == Mode.colour)
                 Column(
                   children: [
                     ElevatedButton(
