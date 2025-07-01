@@ -320,6 +320,7 @@ class _DesignerState extends State<Designer> {
                       max: 5.0,
                       divisions: 48,
                       label: zoom.toStringAsFixed(2),
+                      activeColor: Color(0xFFEA467E),
                       onChanged: (value) {
                         setState(() {
                           zoom = value;
@@ -333,7 +334,7 @@ class _DesignerState extends State<Designer> {
 
               SizedBox(height: 12),
 
-              // GRID + MINIMAP ROW
+              // GRID
               if (gridGenerated)
                 Expanded(
                   child: Stack(
@@ -403,11 +404,10 @@ class _DesignerState extends State<Designer> {
 
                                                 if (symbolName.startsWith('#')) {
                                                   return Container(
-                                                    width: cellSize * 0.8,
-                                                    height: cellSize * 0.8,
+                                                    width: cellSize,
+                                                    height: cellSize,
                                                     decoration: BoxDecoration(
                                                       color: Color(int.parse(symbolName.substring(1), radix: 16) + 0xFF000000),
-                                                      borderRadius: BorderRadius.circular(4),
                                                     ),
                                                   );
                                                 }
@@ -607,7 +607,28 @@ class _DesignerState extends State<Designer> {
                           },
                         );
                       },
-                      child: Text("Pick Color"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFDCE7FB),
+                        foregroundColor: Color(0xFFEA467E),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 20,
+                        ),
+                        minimumSize: Size(100, 50),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                                color: Color(0xFFEA467E),
+                                width: 2
+                            )
+                        )
+                      ),
+                      child: Text(
+                        "Pick a Color",
+                        style: TextStyle(
+                          fontSize: 17,
+                        )
+                      ),
                     ),
                     SizedBox(height: 8),
                     Wrap(
