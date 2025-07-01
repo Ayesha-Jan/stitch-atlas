@@ -46,6 +46,25 @@ class _DesignerState extends State<Designer> {
     {"name": "back post double crochet", "file": "assets/crochet_symbols/bpdc.svg"},
     {"name": "back loop only", "file": "assets/crochet_symbols/blo.svg"},
     {"name": "front loop only", "file": "assets/crochet_symbols/flo.svg"},
+    {"name": "no stitch", "file": "assets/crochet_symbols/none.svg"},
+  ];
+
+  final List<Map<String, String>> knitSymbols = [
+    {"name": "knit", "file": "assets/knit_symbols/k.svg"},
+    {"name": "purl", "file": "assets/knit_symbols/p.svg"},
+    {"name": "yarn over", "file": "assets/knit_symbols/yo.svg"},
+    {"name": "knit 2 together", "file": "assets/knit_symbols/k2tog.svg"},
+    {"name": "purl 2 together", "file": "assets/knit_symbols/p2tog.svg"},
+    {"name": "slip slip knit", "file": "assets/knit_symbols/ssk.svg"},
+    {"name": "slip slip purl", "file": "assets/knit_symbols/ssp.svg"},
+    {"name": "knit 3 together", "file": "assets/knit_symbols/k3tog.svg"},
+    {"name": "slip slip slip knit", "file": "assets/knit_symbols/sssk.svg"},
+    {"name": "make 1 right", "file": "assets/knit_symbols/m1r.svg"},
+    {"name": "make 1 left", "file": "assets/knit_symbols/m1l.svg"},
+    {"name": "knit through back loop", "file": "assets/knit_symbols/ktbl.svg"},
+    {"name": "purl through back loop", "file": "assets/knit_symbols/ptbl.svg"},
+    {"name": "bind off", "file": "assets/knit_symbols/bo.svg"},
+    {"name": "no stitch", "file": "assets/knit_symbols/none.svg"},
   ];
 
   double zoom = 1.0; // Zoom scale for InteractiveViewer
