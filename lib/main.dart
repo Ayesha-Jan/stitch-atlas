@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:stitch_atlas/pages/designer.dart';
-import 'package:stitch_atlas/pages/grid.dart';
 import 'package:stitch_atlas/pages/explorer.dart';
 import 'package:stitch_atlas/pages/home.dart';
 

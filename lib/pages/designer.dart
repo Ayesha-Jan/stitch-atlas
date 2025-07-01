@@ -75,6 +75,13 @@ class _DesignerState extends State<Designer> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset(
+                'assets/images/string.png',
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.fitWidth,
+              ),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -22,72 +22,72 @@ class Home extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-              image: DecorationImage(
-              image: AssetImage("assets/images/background.png"),
-              fit: BoxFit.cover,
+                image: DecorationImage(
+                  image: AssetImage("assets/images/background.png"),
+                fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-        ),
-    // Foreground content
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/designer');
-                    },
-                    style: ElevatedButton.styleFrom(
+          // Foreground content
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/designer');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFDCE7FB),
+                    foregroundColor: Color(0xFFEA467E),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 24,
+                      horizontal: 30
+                    ),
+                    minimumSize: Size(200, 70),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side: BorderSide(
+                        color: Color(0xFFEA467E),
+                        width: 2
+                      )
+                    )
+                  ),
+                  child: Text(
+                    "Go to Designer Page",
+                    style: TextStyle(fontSize: 35),
+                  ),
+                ),
+                SizedBox(height: 200),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/explorer');
+                  },
+                  style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFDCE7FB),
                       foregroundColor: Color(0xFFEA467E),
                       padding: EdgeInsets.symmetric(
-                        vertical: 24,
-                        horizontal: 30
+                          vertical: 24,
+                          horizontal: 30
                       ),
                       minimumSize: Size(200, 70),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        side: BorderSide(
-                          color: Color(0xFFEA467E),
-                          width: 2
-                        )
+                          borderRadius: BorderRadius.circular(30),
+                          side: BorderSide(
+                              color: Color(0xFFEA467E),
+                              width: 2
+                          )
                       )
-                    ),
-                    child: Text(
-                      "Go to Designer Page",
-                      style: TextStyle(fontSize: 35),
-                    ),
                   ),
-                  SizedBox(height: 200),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/explorer');
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFDCE7FB),
-                        foregroundColor: Color(0xFFEA467E),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 24,
-                            horizontal: 30
-                        ),
-                        minimumSize: Size(200, 70),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            side: BorderSide(
-                                color: Color(0xFFEA467E),
-                                width: 2
-                            )
-                        )
-                    ),
-                    child: Text(
-                      "Go to Explorer Page",
-                      style: TextStyle(fontSize: 35),
-                    ),
+                  child: Text(
+                    "Go to Explorer Page",
+                    style: TextStyle(fontSize: 35),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
+        ],
       ),
     );
   }

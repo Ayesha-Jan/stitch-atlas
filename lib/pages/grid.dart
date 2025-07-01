@@ -31,8 +31,8 @@ class _GridState extends State<Grid> {
   List<List<String>> grid = []; // 2D list to hold values (crochet_symbols or colors)
   String selectedSymbol = "no stitch"; // default stitch icon
 
-  List<List<List<String>>> _undoStack = [];
-  List<List<List<String>>> _redoStack = [];
+  final List<List<List<String>>> _undoStack = [];
+  final List<List<List<String>>> _redoStack = [];
 
   Color selectedColor = Colors.blue[100]!;
   List<Color> recentColors = [Colors.blue[100]!];
