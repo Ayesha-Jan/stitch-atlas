@@ -73,42 +73,66 @@ class _DesignerState extends State<Designer> {
         child: Padding(
           padding: EdgeInsets.all(12),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "MODE:  ",
-                style: TextStyle(fontSize: 16),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFFDCE7FB),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: DropdownButton<Mode>(
-                  dropdownColor: Color(0xFFDCE7FB),
-                  value: selectedMode,
-                  onChanged: (mode) {
-                    if (mode != null) setState(() => selectedMode = mode);
-                  },
-                  items: Mode.values.map((m) {
-                    return DropdownMenuItem(
-                      value: m,
-                      child: Text((m.toString().split('.').last).toUpperCase()),
-                    );
-                  }).toList(),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "MODE:  ",
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFDCE7FB),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: DropdownButton<Mode>(
+                      dropdownColor: Color(0xFFDCE7FB),
+                      value: selectedMode,
+                      onChanged: (mode) {
+                        if (mode != null) setState(() => selectedMode = mode);
+                      },
+                      items: Mode.values.map((m) {
+                        return DropdownMenuItem(
+                          value: m,
+                          child: Text(
+                            (m.toString().split('.').last).toUpperCase(),
+                            style: TextStyle(
+                                fontSize: 30
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
 
-              SizedBox(height: 16),
+              SizedBox(height: 100),
 
               Text(
                 "GRID SIZE:",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold
+                ),
               ),
+
+              SizedBox(height: 20),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("ROWS: "),
+                  Text("ROWS: ",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
                   SizedBox(
                     width: 50,
                     child: TextField(
@@ -123,8 +147,15 @@ class _DesignerState extends State<Designer> {
                       ),
                     ),
                   ),
+
                   SizedBox(width: 20),
-                  Text("COLUMNS: "),
+
+                  Text("COLUMNS: ",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
                   SizedBox(
                     width: 50,
                     child: TextField(
@@ -142,7 +173,7 @@ class _DesignerState extends State<Designer> {
                 ],
               ),
 
-              SizedBox(height: 20),
+              SizedBox(height: 100),
 
               // GENERATE GRID BUTTON
               ElevatedButton(
@@ -167,12 +198,12 @@ class _DesignerState extends State<Designer> {
                     backgroundColor: Color(0xFFDCE7FB),
                     foregroundColor: Color(0xFFEA467E),
                     padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20,
+                        vertical: 24,
+                        horizontal: 30
                     ),
-                    minimumSize: Size(200, 50),
+                    minimumSize: Size(200, 70),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(30),
                         side: BorderSide(
                             color: Color(0xFFEA467E),
                             width: 2
@@ -182,7 +213,7 @@ class _DesignerState extends State<Designer> {
                 child: Text(
                   "Generate Grid",
                   style: TextStyle(
-                    fontSize: 25,
+                    fontSize: 40,
                   ),
                 ),
               ),
