@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_svg/svg.dart';
-
-enum Mode { crochet, knit, colour }
+import 'grid.dart';
+import 'mode.dart';
 
 class Designer extends StatefulWidget {
   const Designer({super.key});
@@ -16,168 +14,9 @@ class _DesignerState extends State<Designer> {
 
   final TextEditingController widthController = TextEditingController(text: "8");
   final TextEditingController heightController = TextEditingController(text: "8");
-  final TransformationController _transformationController = TransformationController();
-
-  int gridWidth = 8;
-  int gridHeight = 8;
-  int generatedWidth = 8;
-  int generatedHeight = 8;
-
-  bool gridGenerated = false;
-
-  List<List<String>> grid = []; // 2D list to hold values (crochet_symbols or colors)
-  String selectedSymbol = "no stitch"; // default stitch icon
-
-  List<List<List<String>>> _undoStack = [];
-  List<List<List<String>>> _redoStack = [];
-
-  Color selectedColor = Colors.blue[100]!;
-  List<Color> recentColors = [Colors.blue[100]!];
-
-  // Converts a Color to a hex string like "#RRGGBB"
-  String colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
-  }
-
-  // Converts a hex string like "#RRGGBB" to a Color
-  Color hexToColor(String hex) {
-    hex = hex.replaceFirst('#', '');
-    return Color(int.parse('FF$hex', radix: 16));
-  }
-
-  final List<Map<String, String>> crochetSymbols = [
-    {"name": "chain", "file": "assets/crochet_symbols/ch.svg"},
-    {"name": "slip stitch", "file": "assets/crochet_symbols/slst.svg"},
-    {"name": "single crochet", "file": "assets/crochet_symbols/sc.svg"},
-    {"name": "half double crochet", "file": "assets/crochet_symbols/hdc.svg"},
-    {"name": "double crochet", "file": "assets/crochet_symbols/dc.svg"},
-    {"name": "treble crochet", "file": "assets/crochet_symbols/tc.svg"},
-    {"name": "double treble crochet", "file": "assets/crochet_symbols/dtc.svg"},
-    {"name": "single crochet 2 together", "file": "assets/crochet_symbols/sc2tog.svg"},
-    {"name": "single crochet 3 together", "file": "assets/crochet_symbols/sc3tog.svg"},
-    {"name": "double crochet 2 together", "file": "assets/crochet_symbols/dc2tog.svg"},
-    {"name": "double crochet 3 together", "file": "assets/crochet_symbols/dc3tog.svg"},
-    {"name": "puff", "file": "assets/crochet_symbols/puff.svg"},
-    {"name": "5 double crochet popcorn", "file": "assets/crochet_symbols/5dc-popcorn.svg"},
-    {"name": "chain 3 picot", "file": "assets/crochet_symbols/ch3-picot.svg"},
-    {"name": "front post double crochet", "file": "assets/crochet_symbols/fpdc.svg"},
-    {"name": "back post double crochet", "file": "assets/crochet_symbols/bpdc.svg"},
-    {"name": "back loop only", "file": "assets/crochet_symbols/blo.svg"},
-    {"name": "front loop only", "file": "assets/crochet_symbols/flo.svg"},
-    {"name": "no stitch", "file": "assets/crochet_symbols/none.svg"},
-  ];
-
-  final List<Map<String, String>> knitSymbols = [
-    {"name": "knit", "file": "assets/knit_symbols/k.svg"},
-    {"name": "purl", "file": "assets/knit_symbols/p.svg"},
-    {"name": "yarn over", "file": "assets/knit_symbols/yo.svg"},
-    {"name": "knit 2 together", "file": "assets/knit_symbols/k2tog.svg"},
-    {"name": "purl 2 together", "file": "assets/knit_symbols/p2tog.svg"},
-    {"name": "slip slip knit", "file": "assets/knit_symbols/ssk.svg"},
-    {"name": "slip slip purl", "file": "assets/knit_symbols/ssp.svg"},
-    {"name": "knit 3 together", "file": "assets/knit_symbols/k3tog.svg"},
-    {"name": "slip slip slip knit", "file": "assets/knit_symbols/sssk.svg"},
-    {"name": "make 1 right", "file": "assets/knit_symbols/m1r.svg"},
-    {"name": "make 1 left", "file": "assets/knit_symbols/m1l.svg"},
-    {"name": "knit through back loop", "file": "assets/knit_symbols/ktbl.svg"},
-    {"name": "purl through back loop", "file": "assets/knit_symbols/ptbl.svg"},
-    {"name": "bind off", "file": "assets/knit_symbols/bo.svg"},
-    {"name": "no stitch", "file": "assets/knit_symbols/none.svg"},
-  ];
-
-  double zoom = 1.0; // Zoom scale for InteractiveViewer
-
-  // Generates an empty grid
-  void _generateGrid() {
-    generatedWidth = gridWidth;
-    generatedHeight = gridHeight;
-    grid = List.generate(generatedHeight, (_) => List.filled(generatedWidth, ""));
-    gridGenerated = true;
-    zoom = 1.0;
-    _transformationController.value = Matrix4.identity();
-    setState(() {});
-  }
-
-  // Handles a cell tap
-  void _handleCellTap(int row, int col) {
-    if (row < 0 || row >= grid.length || col < 0 || col >= grid[row].length) return;
-
-    // Save current state for undo
-    _undoStack.add(grid.map((r) => List<String>.from(r)).toList());
-    _redoStack.clear(); // Clear redo stack on new action
-
-    if (selectedMode == Mode.colour) {
-      grid[row][col] = colorToHex(selectedColor);  // Use helper here!
-    } else {
-      final symbolList = selectedMode == Mode.knit ? knitSymbols : crochetSymbols;
-      final symbol = symbolList.firstWhere(
-            (s) => s["name"] == selectedSymbol,
-        orElse: () => {"name": "no stitch"},
-      );
-      grid[row][col] = symbol["name"]!;
-    }
-    setState(() {});
-  }
-
-  void undo() {
-    if (_undoStack.isNotEmpty) {
-      _redoStack.add(grid.map((r) => List<String>.from(r)).toList());
-      grid = _undoStack.removeLast();
-      setState(() {});
-    }
-  }
-
-  void redo() {
-    if (_redoStack.isNotEmpty) {
-      _undoStack.add(grid.map((r) => List<String>.from(r)).toList());
-      grid = _redoStack.removeLast();
-      setState(() {});
-    }
-  }
-
-  Widget buildSymbolDropdown(List<Map<String, String>> symbols, String modeName) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Color(0xFFDCE7FB),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: DropdownButton<String>(
-          value: symbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,
-          hint: Text("Select a $modeName stitch"),
-          onChanged: (value) {
-            final symbol = symbols.firstWhere((s) => s["name"] == value);
-            setState(() {
-              selectedSymbol = symbol["name"]!;
-            });
-          },
-          items: symbols.map((symbol) {
-            return DropdownMenuItem<String>(
-              value: symbol["name"],
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: SvgPicture.asset(symbol["file"]!),
-                  ),
-                  SizedBox(width: 8),
-                  Text(symbol["name"]!),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    // Size of each grid cell in main grid
-    final double cellSize = 30;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -235,64 +74,37 @@ class _DesignerState extends State<Designer> {
           padding: EdgeInsets.all(12),
           child: Column(
             children: [
-              // Mode Row (centered)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "MODE:  ",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFDCE7FB),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: DropdownButton<Mode>(
-                      dropdownColor: Color(0xFFDCE7FB),
-                      value: selectedMode,
-                      onChanged: (mode) {
-                        if (mode != null) {
-                          setState(() {
-                            selectedMode = mode;
-                            // Default to first crochet symbol if in crochet mode
-                            if (mode == Mode.crochet && crochetSymbols.isNotEmpty) {
-                              selectedSymbol = crochetSymbols[0]["name"]!;
-                            } else if (mode == Mode.knit && knitSymbols.isNotEmpty) {
-                              selectedSymbol = knitSymbols[0]["name"]!;
-                            } else {
-                              selectedSymbol = "";
-                            }
-                          });
-                        }
-                      },
-                      items: Mode.values.map((m) {
-                        return DropdownMenuItem(
-                          value: m,
-                          child: Text((m.toString().split('.').last).toUpperCase()),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
+              Text(
+                "MODE:  ",
+                style: TextStyle(fontSize: 16),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFDCE7FB),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: DropdownButton<Mode>(
+                  dropdownColor: Color(0xFFDCE7FB),
+                  value: selectedMode,
+                  onChanged: (mode) {
+                    if (mode != null) setState(() => selectedMode = mode);
+                  },
+                  items: Mode.values.map((m) {
+                    return DropdownMenuItem(
+                      value: m,
+                      child: Text((m.toString().split('.').last).toUpperCase()),
+                    );
+                  }).toList(),
+                ),
               ),
 
               SizedBox(height: 16),
 
-              // Grid Size Row (label)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "GRID SIZE:",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              Text(
+                "GRID SIZE:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
 
-              SizedBox(height: 10),
-
-              // Rows & Columns Inputs
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -309,12 +121,6 @@ class _DesignerState extends State<Designer> {
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                       ),
-                      onChanged: (value) {
-                        final parsed = int.tryParse(value);
-                        if (parsed != null && parsed >= 2 && parsed <= 100) {
-                          gridHeight = parsed;
-                        }
-                      },
                     ),
                   ),
                   SizedBox(width: 20),
@@ -331,27 +137,31 @@ class _DesignerState extends State<Designer> {
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                       ),
-                      onChanged: (value) {
-                        final parsed = int.tryParse(value);
-                        if (parsed != null && parsed >= 2 && parsed <= 100) {
-                          gridWidth = parsed;
-                        }
-                      },
                     ),
                   ),
                 ],
               ),
-
 
               SizedBox(height: 20),
 
               // GENERATE GRID BUTTON
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _generateGrid();  // create a new grid with current gridSize
-                    gridGenerated = true;
-                  });
+                  final width = int.tryParse(widthController.text) ?? 8;
+                  final height = int.tryParse(heightController.text) ?? 8;
+
+                  if (width >= 2 && height >= 2 && width <= 100 && height <= 100) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Grid(
+                          selectedMode: selectedMode,
+                          gridWidth: width,
+                          gridHeight: height,
+                        ),
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFDCE7FB),
@@ -376,300 +186,6 @@ class _DesignerState extends State<Designer> {
                   ),
                 ),
               ),
-
-              SizedBox(height: 12),
-
-              // Zoom and undo/redo
-              if (gridGenerated)
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: undo,
-                          child: Text("Undo"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFDCE7FB),
-                            foregroundColor: Color(0xFFEA467E),
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        ElevatedButton(
-                          onPressed: redo,
-                          child: Text("Redo"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFDCE7FB),
-                            foregroundColor: Color(0xFFEA467E),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("ZOOM: "),
-                        Slider(
-                          value: zoom,
-                          min: 0.2,
-                          max: 5.0,
-                          divisions: 48,
-                          label: zoom.toStringAsFixed(2),
-                          activeColor: Color(0xFFEA467E),
-                          onChanged: (value) {
-                            setState(() {
-                              zoom = value;
-                              // Also update InteractiveViewer matrix scale
-                              _transformationController.value = Matrix4.identity()..scale(zoom);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-              SizedBox(height: 12),
-
-              // GRID
-              if (gridGenerated)
-                Expanded(
-                  child: Stack(
-                    children: [
-                      // Main Grid with labels & zoom & scroll
-                      Expanded(
-                        child: InteractiveViewer(
-                          constrained: false,
-                          boundaryMargin: EdgeInsets.all(20),
-                          minScale: 0.2,
-                          maxScale: 5.0,
-                          scaleEnabled: false,
-                          transformationController: _transformationController,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Top column labels
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const SizedBox(width: 32, height: 32),
-                                      ...List.generate(
-                                        generatedWidth,
-                                            (col) => Container(
-                                          width: cellSize,
-                                          height: cellSize,
-                                          alignment: Alignment.center,
-                                          child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 32, height: 32),
-                                    ],
-                                  ),
-                                ),
-
-                                // MIDDLE ROWS: left labels + grid + right labels
-                                ...List.generate(generatedHeight, (row) {
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        width: 32,
-                                        height: cellSize,
-                                        alignment: Alignment.center,
-                                        child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                      ),
-                                      ...List.generate(generatedWidth, (col) {
-                                        return GestureDetector(
-                                          onTap: () => _handleCellTap(row, col),
-                                          child: Container(
-                                            width: cellSize,
-                                            height: cellSize,
-                                            margin: EdgeInsets.all(1),
-                                            color: Colors.grey[200],
-                                            alignment: Alignment.center,
-                                            child: Builder(
-                                              builder: (_) {
-                                                final symbolName = grid[row][col];
-
-                                                if (symbolName.isEmpty) {
-                                                  return SizedBox.shrink();
-                                                }
-
-                                                if (symbolName.startsWith('#')) {
-                                                  return Container(
-                                                    width: cellSize,
-                                                    height: cellSize,
-                                                    decoration: BoxDecoration(
-                                                      color: hexToColor(symbolName),
-                                                    ),
-                                                  );
-                                                }
-
-                                                // Search in both lists
-                                                final crochetMatch = crochetSymbols.firstWhere(
-                                                      (s) => s["name"] == symbolName,
-                                                  orElse: () => {},
-                                                );
-
-                                                final knitMatch = knitSymbols.firstWhere(
-                                                      (s) => s["name"] == symbolName,
-                                                  orElse: () => {},
-                                                );
-
-                                                final filePath = crochetMatch["file"] ?? knitMatch["file"];
-
-                                                if (filePath == null || filePath.isEmpty) {
-                                                  return Icon(Icons.error, size: cellSize * 0.5); // fallback visual
-                                                }
-
-                                                return SvgPicture.asset(
-                                                  filePath,
-                                                  width: cellSize * 0.8,
-                                                  height: cellSize * 0.8,
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      }),
-
-                                      Container(
-                                        width: 32,
-                                        height: cellSize,
-                                        alignment: Alignment.center,
-                                        child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                      ),
-                                    ],
-                                  );
-                                }),
-
-                                // BOTTOM ROW: scrollable horizontally
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const SizedBox(width: 32, height: 32), // bottom-left corner
-                                      ...List.generate(
-                                        generatedWidth,
-                                            (col) => Container(
-                                          width: cellSize,
-                                          height: cellSize,
-                                          alignment: Alignment.center,
-                                          child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 32, height: 32), // bottom-right corner
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-              if (selectedMode == Mode.crochet)
-                buildSymbolDropdown(crochetSymbols, "crochet")
-              else if (selectedMode == Mode.knit)
-                buildSymbolDropdown(knitSymbols, "knit")
-              else if (selectedMode == Mode.colour)
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Pick a Color"),
-                              content: SingleChildScrollView(
-                                child: ColorPicker(
-                                  pickerColor: selectedColor,
-                                  onColorChanged: (color) {
-                                    selectedColor = color;
-                                  },
-                                  enableAlpha: false,
-                                  pickerAreaHeightPercent: 0.7,
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: Text("Select"),
-                                  onPressed: () {
-                                    // Add to recent colors
-                                    if (!recentColors.contains(selectedColor)) {
-                                      recentColors.insert(0, selectedColor);
-                                      if (recentColors.length > 10) {
-                                        recentColors = recentColors.sublist(0, 10);
-                                      }
-                                    }
-                                    setState(() {});
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFDCE7FB),
-                        foregroundColor: Color(0xFFEA467E),
-                        padding: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 20,
-                        ),
-                        minimumSize: Size(100, 50),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
-                                color: Color(0xFFEA467E),
-                                width: 2
-                            )
-                        )
-                      ),
-                      child: Text(
-                        "Pick a Color",
-                        style: TextStyle(
-                          fontSize: 17,
-                        )
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      children: recentColors.map((color) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedColor = color;
-                            });
-                          },
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: selectedColor == color ? Colors.black : Colors.white,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
             ],
           ),
         ),
