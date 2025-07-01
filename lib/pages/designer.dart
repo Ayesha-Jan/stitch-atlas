@@ -28,9 +28,22 @@ class _DesignerState extends State<Designer> {
   List<List<String>> grid = []; // 2D list to hold values (crochet_symbols or colors)
   String selectedSymbol = "no stitch"; // default stitch icon
 
-  Color selectedColor = Colors.pink[100]!;
-  List<Color> recentColors = [Colors.pink[100]!];
+  List<List<List<String>>> _undoStack = [];
+  List<List<List<String>>> _redoStack = [];
 
+  Color selectedColor = Colors.blue[100]!;
+  List<Color> recentColors = [Colors.blue[100]!];
+
+  // Converts a Color to a hex string like "#RRGGBB"
+  String colorToHex(Color color) {
+    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+  }
+
+  // Converts a hex string like "#RRGGBB" to a Color
+  Color hexToColor(String hex) {
+    hex = hex.replaceFirst('#', '');
+    return Color(int.parse('FF$hex', radix: 16));
+  }
 
   final List<Map<String, String>> crochetSymbols = [
     {"name": "chain", "file": "assets/crochet_symbols/ch.svg"},
@@ -89,18 +102,39 @@ class _DesignerState extends State<Designer> {
   void _handleCellTap(int row, int col) {
     if (row < 0 || row >= grid.length || col < 0 || col >= grid[row].length) return;
 
+    // Save current state for undo
+    _undoStack.add(grid.map((r) => List<String>.from(r)).toList());
+    _redoStack.clear(); // Clear redo stack on new action
+
     if (selectedMode == Mode.colour) {
-      final hex = '#${selectedColor.value.toRadixString(16).padLeft(8, '0')}';
-      grid[row][col] = hex;
+      grid[row][col] = colorToHex(selectedColor);  // Use helper here!
     } else {
       final symbolList = selectedMode == Mode.knit ? knitSymbols : crochetSymbols;
-      final symbol = symbolList.firstWhere((s) => s["name"] == selectedSymbol,
-        orElse: () => {"name": "no stitch"});
+      final symbol = symbolList.firstWhere(
+            (s) => s["name"] == selectedSymbol,
+        orElse: () => {"name": "no stitch"},
+      );
       grid[row][col] = symbol["name"]!;
     }
-
     setState(() {});
   }
+
+  void undo() {
+    if (_undoStack.isNotEmpty) {
+      _redoStack.add(grid.map((r) => List<String>.from(r)).toList());
+      grid = _undoStack.removeLast();
+      setState(() {});
+    }
+  }
+
+  void redo() {
+    if (_redoStack.isNotEmpty) {
+      _undoStack.add(grid.map((r) => List<String>.from(r)).toList());
+      grid = _redoStack.removeLast();
+      setState(() {});
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -308,26 +342,52 @@ class _DesignerState extends State<Designer> {
 
               SizedBox(height: 12),
 
-              // GRID
+              // Zoom and undo/redo
               if (gridGenerated)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
                   children: [
-                    Text("Zoom:"),
-                    Slider(
-                      value: zoom,
-                      min: 0.2,
-                      max: 5.0,
-                      divisions: 48,
-                      label: zoom.toStringAsFixed(2),
-                      activeColor: Color(0xFFEA467E),
-                      onChanged: (value) {
-                        setState(() {
-                          zoom = value;
-                          // Also update InteractiveViewer matrix scale
-                          _transformationController.value = Matrix4.identity()..scale(zoom);
-                        });
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: undo,
+                          child: Text("Undo"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFDCE7FB),
+                            foregroundColor: Color(0xFFEA467E),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: redo,
+                          child: Text("Redo"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFDCE7FB),
+                            foregroundColor: Color(0xFFEA467E),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("ZOOM: "),
+                        Slider(
+                          value: zoom,
+                          min: 0.2,
+                          max: 5.0,
+                          divisions: 48,
+                          label: zoom.toStringAsFixed(2),
+                          activeColor: Color(0xFFEA467E),
+                          onChanged: (value) {
+                            setState(() {
+                              zoom = value;
+                              // Also update InteractiveViewer matrix scale
+                              _transformationController.value = Matrix4.identity()..scale(zoom);
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -407,7 +467,7 @@ class _DesignerState extends State<Designer> {
                                                     width: cellSize,
                                                     height: cellSize,
                                                     decoration: BoxDecoration(
-                                                      color: Color(int.parse(symbolName.substring(1), radix: 16) + 0xFF000000),
+                                                      color: hexToColor(symbolName),
                                                     ),
                                                   );
                                                 }
