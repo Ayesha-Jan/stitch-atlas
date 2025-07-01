@@ -25,7 +25,7 @@ class _DesignerState extends State<Designer> {
   bool gridGenerated = false;
 
   List<List<String>> grid = []; // 2D list to hold values (crochet_symbols or colors)
-  String selectedSymbol = "single crochet"; // default stitch icon or color
+  String selectedSymbol = "no stitch"; // default stitch icon or color
 
   final List<Map<String, String>> crochetSymbols = [
     {"name": "chain", "file": "assets/crochet_symbols/ch.svg"},
@@ -83,18 +83,12 @@ class _DesignerState extends State<Designer> {
   // Handles a cell tap
   void _handleCellTap(int row, int col) {
     if (row < 0 || row >= grid.length || col < 0 || col >= grid[row].length) return;
-    // Store just the symbol name, not the file path
-    final symbol = crochetSymbols.firstWhere((s) => s["name"] == selectedSymbol);
+
+    final symbolList = selectedMode == Mode.knit ? knitSymbols : crochetSymbols;
+
+    final symbol = symbolList.firstWhere((s) => s["name"] == selectedSymbol, orElse: () => {"name": "no stitch"});
     grid[row][col] = symbol["name"]!;
     setState(() {});
-  }
-
-  @override
-  void dispose() {
-    widthController.dispose();
-    heightController.dispose();
-    _transformationController.dispose();
-    super.dispose();
   }
 
   @override
@@ -182,6 +176,8 @@ class _DesignerState extends State<Designer> {
                             // Default to first crochet symbol if in crochet mode
                             if (mode == Mode.crochet && crochetSymbols.isNotEmpty) {
                               selectedSymbol = crochetSymbols[0]["name"]!;
+                            } else if (mode == Mode.knit && knitSymbols.isNotEmpty) {
+                              selectedSymbol = knitSymbols[0]["name"]!;
                             } else {
                               selectedSymbol = "";
                             }
@@ -386,19 +382,42 @@ class _DesignerState extends State<Designer> {
                                             margin: EdgeInsets.all(1),
                                             color: Colors.grey[200],
                                             alignment: Alignment.center,
-                                            child: grid[row][col].isEmpty
-                                                ? SizedBox.shrink()
-                                                : SvgPicture.asset(
-                                                    crochetSymbols.firstWhere(
-                                                          (s) => s["name"] == grid[row][col],
-                                                      orElse: () => {"file": ""}, // fallback
-                                                    )["file"]!,
-                                                    width: cellSize * 0.8,
-                                                    height: cellSize * 0.8,
-                                                ),
+                                            child: Builder(
+                                              builder: (_) {
+                                                final symbolName = grid[row][col];
+
+                                                if (symbolName.isEmpty) {
+                                                  return SizedBox.shrink();
+                                                }
+
+                                                // Search in both lists
+                                                final crochetMatch = crochetSymbols.firstWhere(
+                                                      (s) => s["name"] == symbolName,
+                                                  orElse: () => {},
+                                                );
+
+                                                final knitMatch = knitSymbols.firstWhere(
+                                                      (s) => s["name"] == symbolName,
+                                                  orElse: () => {},
+                                                );
+
+                                                final filePath = crochetMatch["file"] ?? knitMatch["file"];
+
+                                                if (filePath == null || filePath.isEmpty) {
+                                                  return Icon(Icons.error, size: cellSize * 0.5); // fallback visual
+                                                }
+
+                                                return SvgPicture.asset(
+                                                  filePath,
+                                                  width: cellSize * 0.8,
+                                                  height: cellSize * 0.8,
+                                                );
+                                              },
+                                            ),
                                           ),
                                         );
                                       }),
+
                                       Container(
                                         width: 32,
                                         height: cellSize,
@@ -456,6 +475,50 @@ class _DesignerState extends State<Designer> {
                         });
                       },
                       items: crochetSymbols.map((symbol) {
+                        return DropdownMenuItem<String>(
+                          value: symbol["name"],
+                          child: Container(
+                            color: Color(0xFFDCE7FB),
+                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: SvgPicture.asset(
+                                    symbol["file"]!,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Text(symbol["name"]!),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+
+              if (selectedMode == Mode.knit)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFDCE7FB),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: DropdownButton<String>(
+                      value: knitSymbols.any((s) => s["name"] == selectedSymbol) ? selectedSymbol : null,
+                      hint: Text("Select a stitch"),
+                      onChanged: (value) {
+                        final symbol = knitSymbols.firstWhere((s) => s["name"] == value);
+                        setState(() {
+                          selectedSymbol = symbol["name"]!; // this is the SVG path
+                        });
+                      },
+                      items: knitSymbols.map((symbol) {
                         return DropdownMenuItem<String>(
                           value: symbol["name"],
                           child: Container(
