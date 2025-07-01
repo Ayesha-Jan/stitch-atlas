@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_svg/svg.dart';
 
 enum Mode { crochet, knit, colour }
@@ -25,7 +26,11 @@ class _DesignerState extends State<Designer> {
   bool gridGenerated = false;
 
   List<List<String>> grid = []; // 2D list to hold values (crochet_symbols or colors)
-  String selectedSymbol = "no stitch"; // default stitch icon or color
+  String selectedSymbol = "no stitch"; // default stitch icon
+
+  Color selectedColor = Colors.pink[100]!;
+  List<Color> recentColors = [Colors.pink[100]!];
+
 
   final List<Map<String, String>> crochetSymbols = [
     {"name": "chain", "file": "assets/crochet_symbols/ch.svg"},
@@ -84,10 +89,16 @@ class _DesignerState extends State<Designer> {
   void _handleCellTap(int row, int col) {
     if (row < 0 || row >= grid.length || col < 0 || col >= grid[row].length) return;
 
-    final symbolList = selectedMode == Mode.knit ? knitSymbols : crochetSymbols;
+    if (selectedMode == Mode.colour) {
+      final hex = '#${selectedColor.value.toRadixString(16).padLeft(8, '0')}';
+      grid[row][col] = hex;
+    } else {
+      final symbolList = selectedMode == Mode.knit ? knitSymbols : crochetSymbols;
+      final symbol = symbolList.firstWhere((s) => s["name"] == selectedSymbol,
+        orElse: () => {"name": "no stitch"});
+      grid[row][col] = symbol["name"]!;
+    }
 
-    final symbol = symbolList.firstWhere((s) => s["name"] == selectedSymbol, orElse: () => {"name": "no stitch"});
-    grid[row][col] = symbol["name"]!;
     setState(() {});
   }
 
@@ -390,6 +401,17 @@ class _DesignerState extends State<Designer> {
                                                   return SizedBox.shrink();
                                                 }
 
+                                                if (symbolName.startsWith('#')) {
+                                                  return Container(
+                                                    width: cellSize * 0.8,
+                                                    height: cellSize * 0.8,
+                                                    decoration: BoxDecoration(
+                                                      color: Color(int.parse(symbolName.substring(1), radix: 16) + 0xFF000000),
+                                                      borderRadius: BorderRadius.circular(4),
+                                                    ),
+                                                  );
+                                                }
+
                                                 // Search in both lists
                                                 final crochetMatch = crochetSymbols.firstWhere(
                                                       (s) => s["name"] == symbolName,
@@ -543,6 +565,76 @@ class _DesignerState extends State<Designer> {
                       }).toList(),
                     ),
                   ),
+                ),
+
+              if (selectedMode == Mode.colour)
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Pick a Color"),
+                              content: SingleChildScrollView(
+                                child: ColorPicker(
+                                  pickerColor: selectedColor,
+                                  onColorChanged: (color) {
+                                    selectedColor = color;
+                                  },
+                                  enableAlpha: false,
+                                  pickerAreaHeightPercent: 0.7,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: Text("Select"),
+                                  onPressed: () {
+                                    // Add to recent colors
+                                    if (!recentColors.contains(selectedColor)) {
+                                      recentColors.insert(0, selectedColor);
+                                      if (recentColors.length > 10) {
+                                        recentColors = recentColors.sublist(0, 10);
+                                      }
+                                    }
+                                    setState(() {});
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Text("Pick Color"),
+                    ),
+                    SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: recentColors.map((color) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedColor = color;
+                            });
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: selectedColor == color ? Colors.black : Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
             ],
           ),
