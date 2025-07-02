@@ -70,163 +70,191 @@ class _DesignerState extends State<Designer> {
 
       body: Container(
         color: Color(0xFFFDDBE6),
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/string.png',
-                height: 100,
-                width: double.infinity,
-                fit: BoxFit.fitWidth,
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "MODE:  ",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/images/string.png',
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        SizedBox(height: 100),
+
+                        Text(
+                          "MODE:  ",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFDCE7FB),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: DropdownButton<Mode>(
+                            dropdownColor: Color(0xFFDCE7FB),
+                            value: selectedMode,
+                            onChanged: (mode) {
+                              if (mode != null) setState(() => selectedMode = mode);
+                            },
+                            items: Mode.values.map((m) {
+                              return DropdownMenuItem(
+                                value: m,
+                                child: Text(
+                                  (m.toString().split('.').last).toUpperCase(),
+                                  style: TextStyle(
+                                      fontSize: 30
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFDCE7FB),
-                      borderRadius: BorderRadius.circular(15),
+
+                    SizedBox(height: 30),
+
+                    Image.asset(
+                      'assets/images/yarn.png',
+                      width: double.infinity,
+                      fit: BoxFit.fitWidth,
                     ),
-                    child: DropdownButton<Mode>(
-                      dropdownColor: Color(0xFFDCE7FB),
-                      value: selectedMode,
-                      onChanged: (mode) {
-                        if (mode != null) setState(() => selectedMode = mode);
-                      },
-                      items: Mode.values.map((m) {
-                        return DropdownMenuItem(
-                          value: m,
-                          child: Text(
-                            (m.toString().split('.').last).toUpperCase(),
-                            style: TextStyle(
-                                fontSize: 30
+
+                    SizedBox(height: 10),
+
+                    Text(
+                      "GRID SIZE:",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("ROWS: ",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                          child: TextField(
+                            controller: heightController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: true,
+                              fillColor: Color(0xFFDCE7FB),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                             ),
                           ),
-                        );
-                      }).toList(),
+                        ),
+
+                        SizedBox(width: 20),
+
+                        Text("COLUMNS: ",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                          child: TextField(
+                            controller: widthController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: true,
+                              fillColor: Color(0xFFDCE7FB),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
 
-              SizedBox(height: 100),
+                    SizedBox(height: 20),
 
-              Text(
-                "GRID SIZE:",
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold
-                ),
-              ),
-
-              SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("ROWS: ",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
+                    Image.asset(
+                      'assets/images/yarn_flipped.png',
+                      width: double.infinity,
+                      fit: BoxFit.fitWidth,
                     ),
-                  ),
-                  SizedBox(
-                    width: 50,
-                    child: TextField(
-                      controller: heightController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        filled: true,
-                        fillColor: Color(0xFFDCE7FB),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+
+                    SizedBox(height: 50),
+
+                    // GENERATE GRID BUTTON
+                    ElevatedButton(
+                      onPressed: () {
+                        final width = int.tryParse(widthController.text) ?? 8;
+                        final height = int.tryParse(heightController.text) ?? 8;
+
+                        if (width >= 2 && height >= 2 && width <= 100 && height <= 100) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => Grid(
+                                selectedMode: selectedMode,
+                                gridWidth: width,
+                                gridHeight: height,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFDCE7FB),
+                        foregroundColor: Color(0xFFEA467E),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 24,
+                          horizontal: 30
+                        ),
+                        minimumSize: Size(200, 70),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          side: BorderSide(
+                              color: Color(0xFFEA467E),
+                              width: 2
+                          )
+                        )
                       ),
-                    ),
-                  ),
-
-                  SizedBox(width: 20),
-
-                  Text("COLUMNS: ",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  SizedBox(
-                    width: 50,
-                    child: TextField(
-                      controller: widthController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        filled: true,
-                        fillColor: Color(0xFFDCE7FB),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 100),
-
-              // GENERATE GRID BUTTON
-              ElevatedButton(
-                onPressed: () {
-                  final width = int.tryParse(widthController.text) ?? 8;
-                  final height = int.tryParse(heightController.text) ?? 8;
-
-                  if (width >= 2 && height >= 2 && width <= 100 && height <= 100) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => Grid(
-                          selectedMode: selectedMode,
-                          gridWidth: width,
-                          gridHeight: height,
+                      child: Text(
+                        "GENERATE GRID",
+                        style: TextStyle(
+                          fontSize: 40,
                         ),
                       ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFDCE7FB),
-                    foregroundColor: Color(0xFFEA467E),
-                    padding: EdgeInsets.symmetric(
-                        vertical: 24,
-                        horizontal: 30
                     ),
-                    minimumSize: Size(200, 70),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        side: BorderSide(
-                            color: Color(0xFFEA467E),
-                            width: 2
-                        )
-                    )
-                ),
-                child: Text(
-                  "Generate Grid",
-                  style: TextStyle(
-                    fontSize: 40,
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+            Image.asset(
+              'assets/images/string_flipped.png',
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+            SizedBox(height: 20,)
+          ],
+        )
       ),
     );
   }
