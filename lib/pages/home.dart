@@ -60,14 +60,14 @@ class Home extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/images/background.png"),
+                image: AssetImage("assets/images/designs/background.png"),
               fit: BoxFit.cover,
               ),
             ),
           ),
           SizedBox(height: 20),
           Image.asset(
-            'assets/images/yarn.png',
+            'assets/images/designs/yarn.png',
             width: double.infinity,
             fit: BoxFit.fitWidth,
           ),
@@ -78,11 +78,11 @@ class Home extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/images/string.png',
+                  'assets/images/designs/string.png',
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/designer');
@@ -108,23 +108,26 @@ class Home extends StatelessWidget {
                     style: TextStyle(fontSize: 35),
                   ),
                 ),
-                SizedBox(height: 10),
+
+                SizedBox(height: 40),
                 Row(
                   children: [
                     Expanded(
                       child: Image.asset(
-                        'assets/images/crochet.png',
+                        'assets/images/designs/crochet.png',
                         fit: BoxFit.fitWidth,
                       ),
                     ),
                     Expanded(
                       child: Image.asset(
-                        'assets/images/knit.png',
+                        'assets/images/designs/knit.png',
                         fit: BoxFit.fitWidth,
                       ),
                     ),
                   ],
                 ),
+                SizedBox(height: 40),
+
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/explorer');
@@ -150,9 +153,9 @@ class Home extends StatelessWidget {
                     style: TextStyle(fontSize: 35),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 30),
                 Image.asset(
-                  'assets/images/string_flipped.png',
+                  'assets/images/designs/string_flipped.png',
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
                 ),

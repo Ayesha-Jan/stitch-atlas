@@ -245,7 +245,7 @@ class _GridState extends State<Grid> {
           children: [
             SizedBox(height: 10),
             Image.asset(
-              'assets/images/string.png',
+              'assets/images/designs/string.png',
               width: double.infinity,
               fit: BoxFit.fitWidth,
             ),
@@ -540,7 +540,7 @@ class _GridState extends State<Grid> {
                 ],
               ),
             Image.asset(
-              'assets/images/string_flipped.png',
+              'assets/images/designs/string_flipped.png',
               width: double.infinity,
               fit: BoxFit.fitWidth,
             ),

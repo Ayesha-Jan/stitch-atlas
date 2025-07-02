@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Andean Diamonds",
+    "culture": "Peru",
+    "description": "A geometric textile pattern from the Andes.",
+    "image": "assets/images/andean.png",
+    "grid": [
+      ["🟥", "", "🟥"],
+      ["", "🟥", ""],
+      ["🟥", "", "🟥"]
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Nordic Stars",
+    "culture": "Scandinavia",
+    "description": "A snowflake-inspired knit motif.",
+    "image": "assets/images/nordic.png",
+    "grid": [
+      ["", "🧶", ""],
+      ["🧶", "", "🧶"],
+      ["", "🧶", ""]
+    ]
+  }
+]

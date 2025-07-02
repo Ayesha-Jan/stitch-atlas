@@ -74,7 +74,7 @@ class _DesignerState extends State<Designer> {
           children: [
             SizedBox(height: 10),
             Image.asset(
-              'assets/images/string.png',
+              'assets/images/designs/string.png',
               width: double.infinity,
               fit: BoxFit.fitWidth,
             ),
@@ -124,7 +124,7 @@ class _DesignerState extends State<Designer> {
                   SizedBox(height: 30),
 
                   Image.asset(
-                    'assets/images/yarn.png',
+                    'assets/images/designs/yarn.png',
                     width: double.infinity,
                     fit: BoxFit.fitWidth,
                   ),
@@ -193,7 +193,7 @@ class _DesignerState extends State<Designer> {
                   SizedBox(height: 20),
 
                   Image.asset(
-                    'assets/images/yarn_flipped.png',
+                    'assets/images/designs/yarn_flipped.png',
                     width: double.infinity,
                     fit: BoxFit.fitWidth,
                   ),
@@ -246,7 +246,7 @@ class _DesignerState extends State<Designer> {
               ),
             ),
             Image.asset(
-              'assets/images/string_flipped.png',
+              'assets/images/designs/string_flipped.png',
               width: double.infinity,
               fit: BoxFit.fitWidth,
             ),
