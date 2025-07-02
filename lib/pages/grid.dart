@@ -306,7 +306,7 @@ class _GridState extends State<Grid> {
                 child: Stack(
                   children: [
                     // Main Grid with labels & zoom & scroll
-                    Expanded(
+                    Positioned.fill(
                       child: InteractiveViewer(
                         constrained: false,
                         boundaryMargin: EdgeInsets.all(20),

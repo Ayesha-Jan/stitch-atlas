@@ -1,0 +1,164 @@
+[
+  {
+    "region": "Andes",
+    "countries": "Peru, Bolivia, Ecuador",
+    "culture": "Quechua / Inca",
+    "coordinates": [-13.1631, -72.5450],
+    "description": "Andean weaving is one of the oldest textile traditions in the world, using alpaca, llama, and vicuña wool. The patterns are rich with symbolism representing cosmology, nature, and social identity.",
+    "pattern": "Andean Diamond Grid",
+    "source": "https://en.wikipedia.org/wiki/Andean_textile_traditions"
+  },
+  {
+    "region": "West Africa",
+    "countries": "Ghana, Nigeria",
+    "culture": "Ashanti / Yoruba",
+    "coordinates": [7.9465, -1.0232],
+    "description": "Kente cloth is a handwoven textile made of silk and cotton, often in bright colors and geometric shapes. Each pattern has a symbolic meaning rooted in Akan philosophy.",
+    "pattern": "Kente Blocks",
+    "source": "https://en.wikipedia.org/wiki/Kente_cloth"
+  },
+  {
+    "region": "East Africa",
+    "countries": "Ethiopia, Kenya",
+    "culture": "Amhara / Swahili",
+    "coordinates": [1.2921, 36.8219],
+    "description": "East African textiles include the Ethiopian shemma and kanga cloth, often with printed proverbs and vibrant patterns.",
+    "pattern": "Kanga Grid",
+    "source": "https://en.wikipedia.org/wiki/Kanga_(clothing)"
+  },
+  {
+    "region": "Southern Africa",
+    "countries": "South Africa, Zimbabwe",
+    "culture": "Zulu / Ndebele",
+    "coordinates": [-30.5595, 22.9375],
+    "description": "The Ndebele people are known for their vibrant geometric patterns on homes and clothing, often seen in beadwork and woven designs.",
+    "pattern": "Ndebele Motif",
+    "source": "https://en.wikipedia.org/wiki/Ndebele_house_painting"
+  },
+  {
+    "region": "North Africa",
+    "countries": "Morocco, Egypt, Tunisia",
+    "culture": "Berber / Arab",
+    "coordinates": [26.8206, 30.8025],
+    "description": "North African textiles often involve handwoven rugs, like Berber carpets, and embroidery with symmetrical motifs.",
+    "pattern": "Berber Rug Design",
+    "source": "https://en.wikipedia.org/wiki/Berber_carpet"
+  },
+  {
+    "region": "Scandinavia",
+    "countries": "Norway, Sweden, Finland",
+    "culture": "Nordic",
+    "coordinates": [60.4720, 8.4689],
+    "description": "Nordic knitting includes stranded colorwork, often depicting snowflakes, stars, and repetitive geometric motifs. Fair Isle and Selbu patterns are iconic in the region.",
+    "pattern": "Nordic Star Grid",
+    "source": "https://en.wikipedia.org/wiki/Nordic_knitting"
+  },
+  {
+    "region": "Western Europe",
+    "countries": "France, Spain, Portugal",
+    "culture": "Western European",
+    "coordinates": [48.8566, 2.3522],
+    "description": "Embroidery, lacework, and tapestry are major textile traditions. Bayeux tapestry and Valencian silk are notable examples.",
+    "pattern": "Medieval Embroidery",
+    "source": "https://en.wikipedia.org/wiki/Bayeux_Tapestry"
+  },
+  {
+    "region": "Eastern Europe",
+    "countries": "Ukraine, Romania, Poland",
+    "culture": "Slavic",
+    "coordinates": [50.4501, 30.5234],
+    "description": "Slavic embroidery features cross-stitch motifs often inspired by nature, mythology, and folk symbolism. Red and black threads dominate traditional styles.",
+    "pattern": "Slavic Cross Stitch",
+    "source": "https://en.wikipedia.org/wiki/Slavic_folk_embroidery"
+  },
+  {
+    "region": "Russia",
+    "countries": "Russia",
+    "culture": "Russian",
+    "coordinates": [61.5240, 105.3188],
+    "description": "Russian textile arts include intricate lace-making, embroidery with gold thread, and hand-painted shawls.",
+    "pattern": "Orenburg Shawl",
+    "source": "https://en.wikipedia.org/wiki/Orenburg_shawl"
+  },
+  {
+    "region": "Japan",
+    "countries": "Japan",
+    "culture": "Japanese",
+    "coordinates": [36.2048, 138.2529],
+    "description": "Sashiko is a form of Japanese folk embroidery using a simple running stitch to create geometric patterns. It was originally used to reinforce or patch worn clothing.",
+    "pattern": "Sashiko Grid",
+    "source": "https://en.wikipedia.org/wiki/Sashiko"
+  },
+  {
+    "region": "South Asia",
+    "countries": "India, Pakistan, Bangladesh",
+    "culture": "South Asian",
+    "coordinates": [20.5937, 78.9629],
+    "description": "This region is renowned for textiles like Kantha embroidery, Chikankari, and intricate weaving traditions like Banarasi and Jamdani.",
+    "pattern": "Kantha Stitch",
+    "source": "https://en.wikipedia.org/wiki/Kantha_(embroidery)"
+  },
+  {
+    "region": "Southeast Asia",
+    "countries": "Indonesia, Thailand, Vietnam",
+    "culture": "Southeast Asian",
+    "coordinates": [15.8700, 100.9925],
+    "description": "Textile traditions include batik, ikat, and hand-dyed silks, with symbolic motifs reflecting animism, Hinduism, and local legends.",
+    "pattern": "Batik Motif",
+    "source": "https://en.wikipedia.org/wiki/Batik"
+  },
+  {
+    "region": "Middle East",
+    "countries": "Iran, Turkey, Syria",
+    "culture": "Persian / Anatolian / Arab",
+    "coordinates": [29.3117, 47.4818],
+    "description": "Textiles from this region include handwoven carpets, kilims, and embroidery, featuring intricate patterns symbolizing protection, fertility, and spirituality.",
+    "pattern": "Kilim Weave Grid",
+    "source": "https://en.wikipedia.org/wiki/Kilim"
+  },
+  {
+    "region": "Mediterranean",
+    "countries": "Italy, Greece, Cyprus",
+    "culture": "Mediterranean",
+    "coordinates": [34.0522, 18.6466],
+    "description": "Mediterranean textiles feature lace, brocade, and wool-weaving traditions with motifs from classical and Byzantine art.",
+    "pattern": "Mediterranean Brocade",
+    "source": "https://en.wikipedia.org/wiki/Brocade"
+  },
+  {
+    "region": "North America",
+    "countries": "United States, Canada",
+    "culture": "Indigenous / Appalachian",
+    "coordinates": [54.5260, -105.2551],
+    "description": "North American textile traditions vary widely from Navajo weaving to Appalachian quilting, each rich in symbolism, material heritage, and storytelling.",
+    "pattern": "Navajo Diamond Quilt",
+    "source": "https://en.wikipedia.org/wiki/Navajo_weaving"
+  },
+  {
+    "region": "South America",
+    "countries": "Chile, Argentina, Colombia",
+    "culture": "Mapuche / Aymara",
+    "coordinates": [-14.2350, -51.9253],
+    "description": "South American textile art includes Mapuche weaving, known for symbolic geometric designs and bold colors.",
+    "pattern": "Mapuche Bands",
+    "source": "https://en.wikipedia.org/wiki/Mapuche_weaving"
+  },
+  {
+    "region": "Central Asia",
+    "countries": "Uzbekistan, Kazakhstan",
+    "culture": "Turkic",
+    "coordinates": [48.0196, 66.9237],
+    "description": "Suzani embroidery from Central Asia features bold floral and sun motifs, traditionally part of a bride's dowry.",
+    "pattern": "Suzani Motif",
+    "source": "https://en.wikipedia.org/wiki/Suzani_(textile)"
+  },
+  {
+    "region": "Oceania",
+    "countries": "New Zealand, Samoa, Fiji",
+    "culture": "Polynesian / Maori",
+    "coordinates": [-22.7359, 140.0188],
+    "description": "Barkcloth (Tapa) and Maori weaving use natural fibers and symbolic patterns passed down through generations.",
+    "pattern": "Tapa Cloth Motif",
+    "source": "https://en.wikipedia.org/wiki/Tapa_cloth"
+  }
+]
