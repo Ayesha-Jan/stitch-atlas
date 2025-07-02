@@ -241,302 +241,311 @@ class _GridState extends State<Grid> {
 
       body: Container(
         color: Color(0xFFFDDBE6),
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            children: [
-              if (gridGenerated)
-                Column(
-                  children: [
-                    //undo/redo
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: undo,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFDCE7FB),
-                            foregroundColor: Color(0xFFEA467E),
-                          ),
-                          child: Text("Undo"),
-                        ),
-                        SizedBox(width: 20),
-                        ElevatedButton(
-                          onPressed: redo,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFDCE7FB),
-                            foregroundColor: Color(0xFFEA467E),
-                          ),
-                          child: Text("Redo"),
-                        ),
-                      ],
-                    ),
-                    //zoom
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("ZOOM: "),
-                        Slider(
-                          value: zoom,
-                          min: 0.2,
-                          max: 5.0,
-                          divisions: 48,
-                          label: zoom.toStringAsFixed(2),
-                          activeColor: Color(0xFFEA467E),
-                          onChanged: (value) {
-                            setState(() {
-                              zoom = value;
-                              // Also update InteractiveViewer matrix scale
-                              _transformationController.value = Matrix4.identity()..scale(zoom);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 12),
-
-                Expanded(
-                  child: Stack(
+        child: Column(
+          children: [
+            SizedBox(height: 10),
+            Image.asset(
+              'assets/images/string.png',
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+            if (gridGenerated)
+              Column(
+                children: [
+                  //undo/redo
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Main Grid with labels & zoom & scroll
-                      Expanded(
-                        child: InteractiveViewer(
-                          constrained: false,
-                          boundaryMargin: EdgeInsets.all(20),
-                          minScale: 0.2,
-                          maxScale: 5.0,
-                          scaleEnabled: false,
-                          transformationController: _transformationController,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Top column labels
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const SizedBox(width: 32, height: 32),
-                                      ...List.generate(
-                                        generatedWidth,
-                                            (col) => Container(
-                                          width: cellSize,
-                                          height: cellSize,
-                                          alignment: Alignment.center,
-                                          child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 32, height: 32),
-                                    ],
-                                  ),
-                                ),
-
-                                // MIDDLE ROWS: left labels + grid + right labels
-                                ...List.generate(generatedHeight, (row) {
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        width: 32,
-                                        height: cellSize,
-                                        alignment: Alignment.center,
-                                        child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                      ),
-                                      ...List.generate(generatedWidth, (col) {
-                                        return GestureDetector(
-                                          onTap: () => _handleCellTap(row, col),
-                                          child: Container(
-                                            width: cellSize,
-                                            height: cellSize,
-                                            margin: EdgeInsets.all(1),
-                                            color: Colors.grey[200],
-                                            alignment: Alignment.center,
-                                            child: Builder(
-                                              builder: (_) {
-                                                final symbolName = grid[row][col];
-
-                                                if (symbolName.isEmpty) {
-                                                  return SizedBox.shrink();
-                                                }
-
-                                                if (symbolName.startsWith('#')) {
-                                                  return Container(
-                                                    width: cellSize,
-                                                    height: cellSize,
-                                                    decoration: BoxDecoration(
-                                                      color: hexToColor(symbolName),
-                                                    ),
-                                                  );
-                                                }
-
-                                                // Search in both lists
-                                                final crochetMatch = crochetSymbols.firstWhere(
-                                                      (s) => s["name"] == symbolName,
-                                                  orElse: () => {},
-                                                );
-
-                                                final knitMatch = knitSymbols.firstWhere(
-                                                      (s) => s["name"] == symbolName,
-                                                  orElse: () => {},
-                                                );
-
-                                                final filePath = crochetMatch["file"] ?? knitMatch["file"];
-
-                                                if (filePath == null || filePath.isEmpty) {
-                                                  return Icon(Icons.error, size: cellSize * 0.5); // fallback visual
-                                                }
-
-                                                return SvgPicture.asset(
-                                                  filePath,
-                                                  width: cellSize * 0.8,
-                                                  height: cellSize * 0.8,
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      }),
-
-                                      Container(
-                                        width: 32,
-                                        height: cellSize,
-                                        alignment: Alignment.center,
-                                        child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                      ),
-                                    ],
-                                  );
-                                }),
-
-                                // BOTTOM ROW: scrollable horizontally
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const SizedBox(width: 32, height: 32), // bottom-left corner
-                                      ...List.generate(
-                                        generatedWidth,
-                                            (col) => Container(
-                                          width: cellSize,
-                                          height: cellSize,
-                                          alignment: Alignment.center,
-                                          child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 32, height: 32), // bottom-right corner
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                      ElevatedButton(
+                        onPressed: undo,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFDCE7FB),
+                          foregroundColor: Color(0xFFEA467E),
                         ),
+                        child: Text("Undo"),
+                      ),
+                      SizedBox(width: 20),
+                      ElevatedButton(
+                        onPressed: redo,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFDCE7FB),
+                          foregroundColor: Color(0xFFEA467E),
+                        ),
+                        child: Text("Redo"),
                       ),
                     ],
                   ),
-                ),
+                  //zoom
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("ZOOM: "),
+                      Slider(
+                        value: zoom,
+                        min: 0.2,
+                        max: 5.0,
+                        divisions: 48,
+                        label: zoom.toStringAsFixed(2),
+                        activeColor: Color(0xFFEA467E),
+                        onChanged: (value) {
+                          setState(() {
+                            zoom = value;
+                            // Also update InteractiveViewer matrix scale
+                            _transformationController.value = Matrix4.identity()..scale(zoom);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
 
-              if (selectedMode == Mode.crochet)
-                buildSymbolDropdown(crochetSymbols, "crochet")
-              else if (selectedMode == Mode.knit)
-                buildSymbolDropdown(knitSymbols, "knit")
-              else if (selectedMode == Mode.colour)
-                Column(
+              SizedBox(height: 12),
+
+              Expanded(
+                child: Stack(
                   children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Pick a Color"),
-                              content: SingleChildScrollView(
-                                child: ColorPicker(
-                                  pickerColor: selectedColor,
-                                  onColorChanged: (color) {
-                                    selectedColor = color;
-                                  },
-                                  enableAlpha: false,
-                                  pickerAreaHeightPercent: 0.7,
+                    // Main Grid with labels & zoom & scroll
+                    Expanded(
+                      child: InteractiveViewer(
+                        constrained: false,
+                        boundaryMargin: EdgeInsets.all(20),
+                        minScale: 0.2,
+                        maxScale: 5.0,
+                        scaleEnabled: false,
+                        transformationController: _transformationController,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Top column labels
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(width: 32, height: 32),
+                                    ...List.generate(
+                                      generatedWidth,
+                                          (col) => Container(
+                                        width: cellSize,
+                                        height: cellSize,
+                                        alignment: Alignment.center,
+                                        child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 32, height: 32),
+                                  ],
                                 ),
                               ),
-                              actions: [
-                                TextButton(
-                                  child: Text("Select"),
-                                  onPressed: () {
-                                    // Add to recent colors
-                                    if (!recentColors.contains(selectedColor)) {
-                                      recentColors.insert(0, selectedColor);
-                                      if (recentColors.length > 10) {
-                                        recentColors = recentColors.sublist(0, 10);
-                                      }
-                                    }
-                                    setState(() {});
-                                    Navigator.of(context).pop();
-                                  },
+
+                              // MIDDLE ROWS: left labels + grid + right labels
+                              ...List.generate(generatedHeight, (row) {
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 32,
+                                      height: cellSize,
+                                      alignment: Alignment.center,
+                                      child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                    ...List.generate(generatedWidth, (col) {
+                                      return GestureDetector(
+                                        onTap: () => _handleCellTap(row, col),
+                                        child: Container(
+                                          width: cellSize,
+                                          height: cellSize,
+                                          margin: EdgeInsets.all(1),
+                                          color: Colors.grey[200],
+                                          alignment: Alignment.center,
+                                          child: Builder(
+                                            builder: (_) {
+                                              final symbolName = grid[row][col];
+
+                                              if (symbolName.isEmpty) {
+                                                return SizedBox.shrink();
+                                              }
+
+                                              if (symbolName.startsWith('#')) {
+                                                return Container(
+                                                  width: cellSize,
+                                                  height: cellSize,
+                                                  decoration: BoxDecoration(
+                                                    color: hexToColor(symbolName),
+                                                  ),
+                                                );
+                                              }
+
+                                              // Search in both lists
+                                              final crochetMatch = crochetSymbols.firstWhere(
+                                                    (s) => s["name"] == symbolName,
+                                                orElse: () => {},
+                                              );
+
+                                              final knitMatch = knitSymbols.firstWhere(
+                                                    (s) => s["name"] == symbolName,
+                                                orElse: () => {},
+                                              );
+
+                                              final filePath = crochetMatch["file"] ?? knitMatch["file"];
+
+                                              if (filePath == null || filePath.isEmpty) {
+                                                return Icon(Icons.error, size: cellSize * 0.5); // fallback visual
+                                              }
+
+                                              return SvgPicture.asset(
+                                                filePath,
+                                                width: cellSize * 0.8,
+                                                height: cellSize * 0.8,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    }),
+
+                                    Container(
+                                      width: 32,
+                                      height: cellSize,
+                                      alignment: Alignment.center,
+                                      child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                );
+                              }),
+
+                              // BOTTOM ROW: scrollable horizontally
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(width: 32, height: 32), // bottom-left corner
+                                    ...List.generate(
+                                      generatedWidth,
+                                          (col) => Container(
+                                        width: cellSize,
+                                        height: cellSize,
+                                        alignment: Alignment.center,
+                                        child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 32, height: 32), // bottom-right corner
+                                  ],
                                 ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFDCE7FB),
-                        foregroundColor: Color(0xFFEA467E),
-                        padding: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 20,
-                        ),
-                        minimumSize: Size(100, 50),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
-                                color: Color(0xFFEA467E),
-                                width: 2
-                            )
-                        )
-                      ),
-                      child: Text(
-                        "Pick a Color",
-                        style: TextStyle(
-                          fontSize: 17,
-                        )
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      children: recentColors.map((color) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedColor = color;
-                            });
-                          },
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: selectedColor == color ? Colors.black : Colors.white,
-                                width: 2,
                               ),
-                            ),
+                            ],
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-            ],
-          ),
+              ),
+
+            if (selectedMode == Mode.crochet)
+              buildSymbolDropdown(crochetSymbols, "crochet")
+            else if (selectedMode == Mode.knit)
+              buildSymbolDropdown(knitSymbols, "knit")
+            else if (selectedMode == Mode.colour)
+              Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Pick a Color"),
+                            content: SingleChildScrollView(
+                              child: ColorPicker(
+                                pickerColor: selectedColor,
+                                onColorChanged: (color) {
+                                  selectedColor = color;
+                                },
+                                enableAlpha: false,
+                                pickerAreaHeightPercent: 0.7,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text("Select"),
+                                onPressed: () {
+                                  // Add to recent colors
+                                  if (!recentColors.contains(selectedColor)) {
+                                    recentColors.insert(0, selectedColor);
+                                    if (recentColors.length > 10) {
+                                      recentColors = recentColors.sublist(0, 10);
+                                    }
+                                  }
+                                  setState(() {});
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFDCE7FB),
+                      foregroundColor: Color(0xFFEA467E),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
+                      ),
+                      minimumSize: Size(100, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                              color: Color(0xFFEA467E),
+                              width: 2
+                          )
+                      )
+                    ),
+                    child: Text(
+                      "Pick a Color",
+                      style: TextStyle(
+                        fontSize: 17,
+                      )
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: recentColors.map((color) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedColor = color;
+                          });
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: selectedColor == color ? Colors.black : Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            Image.asset(
+              'assets/images/string_flipped.png',
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+            SizedBox(height: 20),
+          ],
         ),
       ),
     );
