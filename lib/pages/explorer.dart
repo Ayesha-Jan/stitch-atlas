@@ -80,7 +80,7 @@ class _ExplorerState extends State<Explorer> {
         ),
       ),
       body: regions.isEmpty
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : FlutterMap(
         options: MapOptions(
           center: LatLng(20, 0),
@@ -153,35 +153,150 @@ class RegionDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(region['region'] ?? 'Region')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Region: ${region['region'] ?? 'Unknown'}",
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                "Countries: ${region['countries'] ?? 'Unknown'}",
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                "Culture: ${region['culture'] ?? 'Unknown'}",
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              Text(region['description'] ?? '', style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 10),
-              Text("Pattern: ${region['pattern'] ?? 'Unknown'}",
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-            ],
+      appBar: AppBar(
+        title: Text(
+          (region['region'] ?? 'Region').toUpperCase(),
+          style: TextStyle(
+            fontSize: 28,
+            color: Color(0xFFEA467E),
+            fontWeight: FontWeight.bold,
           ),
+        ),
+        centerTitle: true,
+        backgroundColor: Color(0xFFDCE7FB),
+      ),
+      backgroundColor: Color(0xFFFDDBE6),
+
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            Image.asset(
+              'assets/images/designs/string.png',
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Card(
+                color: Color(0xFFDCE7FB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 2,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        "COUNTRIES: ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFFEA467E),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "${region['countries'] ?? 'Unknown'}",
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 6),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Card(
+                color: Color(0xFFDCE7FB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 2,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "CULTURE: ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFFEA467E),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "${region['culture'] ?? 'Unknown'}",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Card(
+                color: Color(0xFFDCE7FB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 2,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  child: Text(
+                    region['description'] ?? '',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Card(
+                color: Color(0xFFDCE7FB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 2,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        "PATTERN: ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Color(0xFFEA467E),
+                        ),
+                      ),
+                      Text(
+                        "${region['pattern'] ?? 'Unknown'}",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Image.asset(
+              'assets/images/designs/string_flipped.png',
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+          ],
         ),
       ),
     );
