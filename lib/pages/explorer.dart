@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:url_launcher/url_launcher.dart';
+
 
 class Explorer extends StatefulWidget {
   const Explorer({super.key});
@@ -290,6 +292,36 @@ class RegionDetail extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 10),
+            if (region['source'] != null && region['source'].toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      final url = Uri.parse(region['source']);
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Could not launch URL')),
+                        );
+                      }
+                    },
+                    icon: Icon(Icons.open_in_new),
+                    label: Text("Learn More",
+                      style: TextStyle(fontSize: 25),),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFEA467E),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             SizedBox(height: 10),
             Image.asset(
               'assets/images/designs/string_flipped.png',
