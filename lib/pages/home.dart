@@ -23,30 +23,60 @@ class Home extends StatelessWidget {
         child: Column(
           children: [
             DrawerHeader(
-                child: Icon(
-                  Icons.favorite,
-                  size: 48,
+                child: Image(
+                  image: AssetImage('assets/images/designs/crochet.png'),
+                  fit: BoxFit.contain,
                 )
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text("H O M E"),
+              leading: Icon(
+                Icons.home,
+                size: 30,
+                color: Color(0xFFEA467E),
+              ),
+              title: Text(
+                "H O M E",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xFFEA467E),
+                  fontWeight: FontWeight.bold
+                ),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/home');
               },
             ),
             ListTile(
-              leading: Icon(Icons.design_services),
-              title: Text("D E S I G N E R"),
+              leading: Icon(
+                Icons.design_services,
+                size: 30,
+                color: Color(0xFFEA467E),
+              ),
+              title: Text(
+                "D E S I G N E R",
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFFEA467E),
+                    fontWeight: FontWeight.bold
+                ),),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/designer');
               },
             ),
             ListTile(
-              leading: Icon(Icons.explore),
-              title: Text("E X P L O R E R"),
+              leading: Icon(
+                Icons.explore,
+                size: 30,
+                color: Color(0xFFEA467E),),
+              title: Text(
+                "E X P L O R E R",
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFFEA467E),
+                    fontWeight: FontWeight.bold
+                ),),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/explorer');
