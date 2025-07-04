@@ -82,12 +82,12 @@ class _ExplorerState extends State<Explorer> {
         ),
       ),
       body: regions.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : FlutterMap(
-        options: MapOptions(
-          center: LatLng(20, 0),
-          zoom: 2,
-        ),
+        ? Center(child: CircularProgressIndicator())
+        : FlutterMap(
+          options: MapOptions(
+            center: LatLng(20, 0),
+            zoom: 2,
+          ),
         children: [
           // TileLayer for base map tiles
           TileLayer(

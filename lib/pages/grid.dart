@@ -28,8 +28,8 @@ class _GridState extends State<Grid> {
 
   bool gridGenerated = false;
 
-  List<List<String>> grid = []; // 2D list to hold values (crochet_symbols or colors)
-  String selectedSymbol = "no stitch"; // default stitch icon
+  List<List<String>> grid = [];
+  String selectedSymbol = "no stitch";
 
   final List<List<List<String>>> _undoStack = [];
   final List<List<List<String>>> _redoStack = [];
@@ -116,7 +116,7 @@ class _GridState extends State<Grid> {
     _redoStack.clear(); // Clear redo stack on new action
 
     if (widget.selectedMode == Mode.colour) {
-      grid[row][col] = colorToHex(selectedColor);  // Use helper here!
+      grid[row][col] = colorToHex(selectedColor);
     } else {
       final symbolList = widget.selectedMode == Mode.knit ? knitSymbols : crochetSymbols;
       final symbol = symbolList.firstWhere(
