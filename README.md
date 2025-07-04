@@ -1,16 +1,96 @@
-# stitch_atlas
+# 🧶🗺️ Stitch Atlas
 
-A new Flutter project.
+**Stitch Atlas** is a Flutter app that celebrates global textile traditions while giving users a creative space to design their own stitch patterns. Whether you're an artist, a fiber nerd, or a cultural explorer, Stitch Atlas lets you map, learn, and make.
 
+---
+
+## Features
+
+### Home Page
+- Navigate to:
+  - **🧶 Designer**: Create your own stitch patterns
+  - **🌍 Explorer**: Discover textile traditions around the world
+
+---
+
+### Designer Page
+
+Choose your mode and customize your creative canvas:
+
+- **Modes**:
+  - **Crochet**
+  - **Knit**
+  - **Color**
+- **Grid Size**: Set your own dimensions (e.g. 25x25)
+- Tap "Generate grid" to open a working grid
+
+---
+
+### Grid Page
+
+Design your stitch pattern with ease:
+
+- **Undo / Redo** support.
+- **Zoom slider** for grid magnification.
+- **Stitch Palette**: Choose symbols for Knit/Crochet modes.
+- **Color Picker**: Select colors for Color mode.
+
+---
+
+### Explorer Page
+
+Explore the textile traditions of the world:
+
+- Interactive map with tappable region markers
+- Regions are defined in a local JSON file
+- Tap a marker to view full details, including:
+  - Region
+  - Countries
+  - Culture
+  - Description
+  - Image
+  - External source link (Wikipedia)
+ 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK
+- Android Studio / Xcode or physical device
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Install and Run
+    
+    git clone https://github.com/Ayesha-Jan/stitch-atlas.git
+    cd stitch-atlas
+    flutter pub get
+    flutter run
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## Project Structure
+
+<pre> stitch-atlas/ 
+  lib/
+  ├── main.dart
+  ├── pages/
+      ├── home.dart
+      ├── designer.dart
+      ├── grid.dart
+      ├── explorer.dart
+      ├── mode.dart
+  /assets
+  ├── images/
+      ├── designs/
+      ├── patterns/
+  ├── crochet_symbols/ 
+  ├── knit_symbols/
+  ├── data/
+      ├── regions.json
+</pre>
+
+---
+
+## Author
+
+Developed by: Ayesha A. Jan  
+Email: Ayesha.Jan@stud.srh-campus-berlin.de  
