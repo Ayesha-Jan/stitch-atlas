@@ -293,6 +293,19 @@ class RegionDetail extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
+            if (region['image'] != null && region['image'].toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Image.asset(
+                    region['image'],
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            SizedBox(height: 10),
             if (region['source'] != null && region['source'].toString().isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -328,6 +341,7 @@ class RegionDetail extends StatelessWidget {
               width: double.infinity,
               fit: BoxFit.fitWidth,
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),
