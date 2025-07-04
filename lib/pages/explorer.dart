@@ -127,29 +127,10 @@ class _ExplorerState extends State<Explorer> {
             subdomains: ['a', 'b', 'c'],
           ),
 
-          // Overlay a semi-transparent pink polygon to simulate pink land color
-          PolygonLayer(
-            polygons: [
-              Polygon(
-                points: [
-                  LatLng(90, -180),
-                  LatLng(90, 180),
-                  LatLng(-90, 180),
-                  LatLng(-90, -180),
-                ],
-                color: Color(0xFFFDDBE6).withOpacity(0.3),
-                borderColor: Colors.transparent,
-              )
-            ],
-          ),
-
           MarkerLayer(
             markers: regions.map((region) {
               final coords = region['coordinates'];
-              // If no coordinates, provide default (e.g., 0,0) or skip marker
-              if (coords == null || coords.length < 2) {
-                return null;
-              }
+
               return Marker(
                 point: LatLng(coords[0], coords[1]),
                 width: 40,
