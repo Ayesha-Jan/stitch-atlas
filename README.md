@@ -18,9 +18,9 @@
 Choose your mode and customize your creative canvas:
 
 - **Modes**:
-  - **Crochet**
-  - **Knit**
-  - **Color**
+  - Crochet
+  - Knit
+  - Colour
 - **Grid Size**: Set your own dimensions (e.g. 25x25)
 - Tap "Generate grid" to open a working grid
 
