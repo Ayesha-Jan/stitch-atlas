@@ -90,7 +90,7 @@ Explore the textile traditions of the world:
 
 ---
 
-Knit symbol graphics by by [@marnen's Knitting Symbols](https://github.com/marnen/knitting_symbols)! Thanks for your open-source contribution!
+Knit symbol graphics by by [@marnen](https://github.com/marnen/knitting_symbols)! Thanks for your open-source contribution!
 
 ## Author
 
