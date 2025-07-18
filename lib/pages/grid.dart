@@ -330,150 +330,182 @@ class _GridState extends State<Grid> {
                 ],
               ),
 
-              SizedBox(height: 12),
+            SizedBox(height: 12),
 
-              Expanded(
-                child: Stack(
-                  children: [
-                    // Main Grid with labels & zoom & scroll
-                    Positioned.fill(
-                      child: InteractiveViewer(
-                        constrained: false,
-                        boundaryMargin: EdgeInsets.all(20),
-                        minScale: 0.2,
-                        maxScale: 5.0,
-                        scaleEnabled: false,
-                        transformationController: _transformationController,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Top column labels
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const SizedBox(width: 32, height: 32),
-                                    ...List.generate(
-                                      generatedWidth,
-                                          (col) => Container(
-                                        width: cellSize,
-                                        height: cellSize,
-                                        alignment: Alignment.center,
-                                        child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: InteractiveViewer(
+                      constrained: false,
+                      boundaryMargin: EdgeInsets.all(20),
+                      minScale: 0.2,
+                      maxScale: 5.0,
+                      scaleEnabled: false,
+                      transformationController: _transformationController,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // TOP COLUMN LABELS
+                            Row(
+                              children: [
+                                const SizedBox(width: 32, height: 32), // top-left spacer
+                                ...List.generate(
+                                  generatedWidth,
+                                      (col) => Container(
+                                    width: cellSize,
+                                    height: cellSize,
+                                    alignment: Alignment.center,
+                                    child: FittedBox(
+                                      child: Text(
+                                        '${col + 1}',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 32, height: 32),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 32), // optional padding after last column
+                              ],
+                            ),
 
-                              // MIDDLE ROWS: left labels + grid + right labels
-                              ...List.generate(generatedHeight, (row) {
-                                return Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 32,
-                                      height: cellSize,
-                                      alignment: Alignment.center,
-                                      child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
+                            // GRID WITH LEFT/RIGHT LABELS
+                            ...List.generate(generatedHeight, (row) {
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Left row number
+                                  Container(
+                                    width: 32,
+                                    height: cellSize,
+                                    alignment: Alignment.center,
+                                    child: FittedBox(
+                                      child: Text(
+                                        '${generatedHeight - row}',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
                                     ),
-                                    ...List.generate(generatedWidth, (col) {
-                                      return GestureDetector(
-                                        onTap: () => _handleCellTap(row, col),
-                                        child: Container(
-                                          width: cellSize,
-                                          height: cellSize,
-                                          margin: EdgeInsets.all(1),
+                                  ),
+
+                                  // Grid cells
+                                  ...List.generate(generatedWidth, (col) {
+                                    return GestureDetector(
+                                      onTap: () => _handleCellTap(row, col),
+                                      child: Container(
+                                        width: cellSize,
+                                        height: cellSize,
+                                        decoration: BoxDecoration(
                                           color: Colors.grey[200],
-                                          alignment: Alignment.center,
-                                          child: Builder(
-                                            builder: (_) {
-                                              final symbolName = grid[row][col];
-
-                                              if (symbolName.isEmpty) {
-                                                return SizedBox.shrink();
-                                              }
-
-                                              if (symbolName.startsWith('#')) {
-                                                return Container(
-                                                  width: cellSize,
-                                                  height: cellSize,
-                                                  decoration: BoxDecoration(
-                                                    color: hexToColor(symbolName),
-                                                  ),
-                                                );
-                                              }
-
-                                              // Search in both lists
-                                              final crochetMatch = crochetSymbols.firstWhere(
-                                                    (s) => s["name"] == symbolName,
-                                                orElse: () => {},
-                                              );
-
-                                              final knitMatch = knitSymbols.firstWhere(
-                                                    (s) => s["name"] == symbolName,
-                                                orElse: () => {},
-                                              );
-
-                                              final filePath = crochetMatch["file"] ?? knitMatch["file"];
-
-                                              if (filePath == null || filePath.isEmpty) {
-                                                return Icon(Icons.error, size: cellSize * 0.5); // fallback visual
-                                              }
-
-                                              return SvgPicture.asset(
-                                                filePath,
-                                                width: cellSize * 0.8,
-                                                height: cellSize * 0.8,
-                                              );
-                                            },
+                                          border: Border.all(
+                                            color: Colors.pink.shade100,
+                                            width: 0.5,
                                           ),
                                         ),
-                                      );
-                                    }),
-
-                                    Container(
-                                      width: 32,
-                                      height: cellSize,
-                                      alignment: Alignment.center,
-                                      child: Text('${generatedHeight - row}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                    ),
-                                  ],
-                                );
-                              }),
-
-                              // BOTTOM ROW: scrollable horizontally
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const SizedBox(width: 32, height: 32), // bottom-left corner
-                                    ...List.generate(
-                                      generatedWidth,
-                                          (col) => Container(
-                                        width: cellSize,
-                                        height: cellSize,
                                         alignment: Alignment.center,
-                                        child: Text('${col + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                        child: Builder(
+                                          builder: (_) {
+                                            final symbolName = grid[row][col];
+
+                                            if (symbolName.isEmpty) {
+                                              return SizedBox.shrink();
+                                            }
+
+                                            if (symbolName.startsWith('#')) {
+                                              return Container(
+                                                width: cellSize,
+                                                height: cellSize,
+                                                decoration: BoxDecoration(
+                                                  color: hexToColor(symbolName),
+                                                ),
+                                              );
+                                            }
+
+                                            final crochetMatch = crochetSymbols.firstWhere(
+                                                  (s) => s["name"] == symbolName,
+                                              orElse: () => {},
+                                            );
+
+                                            final knitMatch = knitSymbols.firstWhere(
+                                                  (s) => s["name"] == symbolName,
+                                              orElse: () => {},
+                                            );
+
+                                            final filePath = crochetMatch["file"] ?? knitMatch["file"];
+
+                                            if (filePath == null || filePath.isEmpty) {
+                                              return Icon(Icons.error, size: cellSize * 0.5);
+                                            }
+
+                                            return SvgPicture.asset(
+                                              filePath,
+                                              width: cellSize * 0.8,
+                                              height: cellSize * 0.8,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  }),
+
+                                  // Right row number
+                                  Container(
+                                    width: 32,
+                                    height: cellSize,
+                                    alignment: Alignment.center,
+                                    child: FittedBox(
+                                      child: Text(
+                                        '${generatedHeight - row}',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 32, height: 32), // bottom-right corner
-                                  ],
+                                  ),
+                                ],
+                              );
+                            }),
+
+                            // BOTTOM COLUMN LABELS
+                            Row(
+                              children: [
+                                const SizedBox(width: 32, height: 32), // bottom-left spacer
+                                ...List.generate(
+                                  generatedWidth,
+                                      (col) => Container(
+                                    width: cellSize,
+                                    height: cellSize,
+                                    alignment: Alignment.center,
+                                    child: FittedBox(
+                                      child: Text(
+                                        '${col + 1}',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                                const SizedBox(width: 32), // optional right padding
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
+
 
             if (selectedMode == Mode.crochet)
               buildSymbolDropdown(crochetSymbols, "crochet")
