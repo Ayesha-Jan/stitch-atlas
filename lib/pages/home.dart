@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'drawer.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -18,73 +19,7 @@ class Home extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Color(0xFFDCE7FB),
       ),
-      drawer: Drawer(
-        backgroundColor: Color(0xFFDCE7FB),
-        child: Column(
-          children: [
-            DrawerHeader(
-                child: Image(
-                  image: AssetImage('assets/images/designs/crochet.png'),
-                  fit: BoxFit.contain,
-                )
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.home,
-                size: 20,
-                color: Color(0xFFEA467E),
-              ),
-              title: Text(
-                "H O M E",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFFEA467E),
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/home');
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.design_services,
-                size: 20,
-                color: Color(0xFFEA467E),
-              ),
-              title: Text(
-                "D E S I G N E R",
-                style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFFEA467E),
-                    fontWeight: FontWeight.bold
-                ),),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/designer');
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.explore,
-                size: 20,
-                color: Color(0xFFEA467E),),
-              title: Text(
-                "E X P L O R E R",
-                style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFFEA467E),
-                    fontWeight: FontWeight.bold
-                ),),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/explorer');
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: const AppDrawer(),
       body: Stack(
         children: [
           Container(
