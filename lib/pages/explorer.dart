@@ -125,12 +125,19 @@ class _ExplorerState extends State<Explorer> {
           TileLayer(
             urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             subdomains: ['a', 'b', 'c'],
+            tileProvider: NetworkTileProvider(
+              headers: {
+              'User-Agent': 'StitchAtlas/1.0 (ayeshajan667@gmail.com)',
+              },
+            ),
           ),
 
           MarkerLayer(
             markers: regions.map((region) {
               final coords = region['coordinates'];
-
+              if (coords == null || coords.length < 2) {
+                return null;
+              }
               return Marker(
                 point: LatLng(coords[0], coords[1]),
                 width: 40,
@@ -216,7 +223,7 @@ class RegionDetail extends StatelessWidget {
                       Text(
                         "${region['countries'] ?? 'Unknown'}",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 19,
                         ),
                       )
                     ],
