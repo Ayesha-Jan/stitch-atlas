@@ -135,7 +135,7 @@
     "culture": "Mediterranean",
     "coordinates": [34.0522, 18.6466],
     "description": "Mediterranean textiles feature lace, brocade, and wool-weaving traditions with motifs from classical and Byzantine art.",
-    "pattern": "Mediterranean Brocade",
+    "pattern": "Brocade",
     "image": "assets/images/patterns/brocade.jpg",
     "source": "https://en.wikipedia.org/wiki/Brocade"
   },
@@ -145,7 +145,7 @@
     "culture": "Indigenous / Appalachian",
     "coordinates": [54.5260, -105.2551],
     "description": "North American textile traditions vary widely from Navajo weaving to Appalachian quilting, each rich in symbolism, material heritage, and storytelling.",
-    "pattern": "Navajo Diamond Quilt",
+    "pattern": "Navajo Quilt",
     "image": "assets/images/patterns/navajo.jpg",
     "source": "https://en.wikipedia.org/wiki/Navajo_weaving"
   },

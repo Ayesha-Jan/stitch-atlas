@@ -22,7 +22,7 @@ class _DesignerState extends State<Designer> {
         title: Text(
           "D E S I G N E R",
           style: TextStyle(
-            fontSize: 28,
+            fontSize: 20,
             color: Color(0xFFEA467E),
             fontWeight: FontWeight.bold,
           ),
@@ -43,13 +43,13 @@ class _DesignerState extends State<Designer> {
             ListTile(
               leading: Icon(
                 Icons.home,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),
               ),
               title: Text(
                 "H O M E",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),
@@ -62,13 +62,13 @@ class _DesignerState extends State<Designer> {
             ListTile(
               leading: Icon(
                 Icons.design_services,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),
               ),
               title: Text(
                 "D E S I G N E R",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),),
@@ -80,12 +80,12 @@ class _DesignerState extends State<Designer> {
             ListTile(
               leading: Icon(
                 Icons.explore,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),),
               title: Text(
                 "E X P L O R E R",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),),
@@ -115,12 +115,12 @@ class _DesignerState extends State<Designer> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
 
-                      SizedBox(height: 100),
+                      SizedBox(height: 70),
 
                       Text(
                         "MODE:  ",
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -141,7 +141,7 @@ class _DesignerState extends State<Designer> {
                               child: Text(
                                 (m.toString().split('.').last).toUpperCase(),
                                 style: TextStyle(
-                                    fontSize: 30
+                                    fontSize: 20
                                 ),
                               ),
                             );
@@ -151,7 +151,7 @@ class _DesignerState extends State<Designer> {
                     ],
                   ),
 
-                  SizedBox(height: 30),
+                  SizedBox(height: 10),
 
                   Image.asset(
                     'assets/images/designs/yarn.png',
@@ -164,7 +164,7 @@ class _DesignerState extends State<Designer> {
                   Text(
                     "GRID SIZE:",
                     style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold
                     ),
                   ),
@@ -176,7 +176,7 @@ class _DesignerState extends State<Designer> {
                     children: [
                       Text("ROWS: ",
                         style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold
                         ),
                       ),
@@ -199,7 +199,7 @@ class _DesignerState extends State<Designer> {
 
                       Text("COLUMNS: ",
                         style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold
                         ),
                       ),
@@ -228,7 +228,7 @@ class _DesignerState extends State<Designer> {
                     fit: BoxFit.fitWidth,
                   ),
 
-                  SizedBox(height: 50),
+                  SizedBox(height: 30),
 
                   // GENERATE GRID BUTTON
                   ElevatedButton(
@@ -268,7 +268,7 @@ class _DesignerState extends State<Designer> {
                     child: Text(
                       "GENERATE GRID",
                       style: TextStyle(
-                        fontSize: 40,
+                        fontSize: 25,
                       ),
                     ),
                   ),

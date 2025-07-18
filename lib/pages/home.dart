@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
         title: Text(
           "S T I T C H   A T L A S",
           style: TextStyle(
-            fontSize: 28,
+            fontSize: 20,
             color: Color(0xFFEA467E),
             fontWeight: FontWeight.bold,
           ),
@@ -31,13 +31,13 @@ class Home extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.home,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),
               ),
               title: Text(
                 "H O M E",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 15,
                   color: Color(0xFFEA467E),
                   fontWeight: FontWeight.bold
                 ),
@@ -50,13 +50,13 @@ class Home extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.design_services,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),
               ),
               title: Text(
                 "D E S I G N E R",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),),
@@ -68,12 +68,12 @@ class Home extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.explore,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),),
               title: Text(
                 "E X P L O R E R",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),),
@@ -95,7 +95,6 @@ class Home extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 20),
           Image.asset(
             'assets/images/designs/yarn.png',
             width: double.infinity,
@@ -107,6 +106,7 @@ class Home extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(height: 25),
                 Image.asset(
                   'assets/images/designs/string.png',
                   width: double.infinity,
@@ -135,11 +135,11 @@ class Home extends StatelessWidget {
                   ),
                   child: Text(
                     "Go to Designer Page",
-                    style: TextStyle(fontSize: 35),
+                    style: TextStyle(fontSize: 25),
                   ),
                 ),
 
-                SizedBox(height: 40),
+                SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
@@ -156,7 +156,7 @@ class Home extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 20),
 
                 ElevatedButton(
                   onPressed: () {
@@ -180,10 +180,10 @@ class Home extends StatelessWidget {
                   ),
                   child: Text(
                     "Go to Explorer Page",
-                    style: TextStyle(fontSize: 35),
+                    style: TextStyle(fontSize: 25),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 20),
                 Image.asset(
                   'assets/images/designs/string_flipped.png',
                   width: double.infinity,

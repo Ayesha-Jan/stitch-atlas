@@ -37,7 +37,7 @@ class _ExplorerState extends State<Explorer> {
         title: Text(
           "E X P L O R E R",
           style: TextStyle(
-            fontSize: 28,
+            fontSize: 20,
             color: Color(0xFFEA467E),
             fontWeight: FontWeight.bold,
           ),
@@ -58,13 +58,13 @@ class _ExplorerState extends State<Explorer> {
             ListTile(
               leading: Icon(
                 Icons.home,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),
               ),
               title: Text(
                 "H O M E",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),
@@ -77,13 +77,13 @@ class _ExplorerState extends State<Explorer> {
             ListTile(
               leading: Icon(
                 Icons.design_services,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),
               ),
               title: Text(
                 "D E S I G N E R",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),),
@@ -95,12 +95,12 @@ class _ExplorerState extends State<Explorer> {
             ListTile(
               leading: Icon(
                 Icons.explore,
-                size: 30,
+                size: 20,
                 color: Color(0xFFEA467E),),
               title: Text(
                 "E X P L O R E R",
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     color: Color(0xFFEA467E),
                     fontWeight: FontWeight.bold
                 ),),
@@ -179,7 +179,7 @@ class RegionDetail extends StatelessWidget {
         title: Text(
           (region['region'] ?? 'Region').toUpperCase(),
           style: TextStyle(
-            fontSize: 28,
+            fontSize: 20,
             color: Color(0xFFEA467E),
             fontWeight: FontWeight.bold,
           ),
@@ -200,66 +200,81 @@ class RegionDetail extends StatelessWidget {
               fit: BoxFit.fitWidth,
             ),
             SizedBox(height: 10),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Card(
-                color: Color(0xFFDCE7FB),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                elevation: 2,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        "COUNTRIES: ",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFFEA467E),
-                          fontWeight: FontWeight.bold,
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Card(
+                  color: Color(0xFFDCE7FB),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  elevation: 2,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            "COUNTRIES: ",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFFEA467E),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
-                      Text(
-                        "${region['countries'] ?? 'Unknown'}",
-                        style: TextStyle(
-                          fontSize: 19,
+                        SizedBox(height: 4),
+                        Center(
+                          child: Text(
+                            "${region['countries'] ?? 'Unknown'}",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             SizedBox(height: 6),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Card(
-                color: Color(0xFFDCE7FB),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                elevation: 2,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "CULTURE: ",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFFEA467E),
-                          fontWeight: FontWeight.bold,
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Card(
+                  color: Color(0xFFDCE7FB),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  elevation: 2,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            "CULTURES: ",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFFEA467E),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${region['culture'] ?? 'Unknown'}",
-                          style: TextStyle(fontSize: 20),
+                        SizedBox(height: 4),
+                        Center(
+                          child: Text(
+                            "${region['culture'] ?? 'Unknown'}",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -277,7 +292,7 @@ class RegionDetail extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   child: Text(
                     region['description'] ?? '',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ),
@@ -294,18 +309,20 @@ class RegionDetail extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "PATTERN: ",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontSize: 18,
                           color: Color(0xFFEA467E),
                         ),
                       ),
                       Text(
                         "${region['pattern'] ?? 'Unknown'}",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 17),
+                        softWrap: true,
                       ),
                     ],
                   ),
