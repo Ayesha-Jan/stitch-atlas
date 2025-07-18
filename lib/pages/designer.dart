@@ -230,6 +230,20 @@ class _DesignerState extends State<Designer> {
                             ),
                           ),
                         );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text("Invalid Input"),
+                            content: Text("Please enter a number between 2 and 100 for both rows and columns."),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text("OK"),
+                              ),
+                            ],
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -242,7 +256,7 @@ class _DesignerState extends State<Designer> {
                         side: BorderSide(color: Color(0xFFEA467E), width: 2),
                       ),
                     ),
-                    child: Text("GENERATE GRID", style: TextStyle(fontSize: 25)),
+                    child: Text("GENERATE GRID", style: TextStyle(fontSize: 22)),
                   ),
                 ),
 
