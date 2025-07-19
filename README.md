@@ -8,8 +8,8 @@
 
 ### Home Page
 - Navigate to:
-  - **🧶 Designer**: Create your own stitch patterns
-  - **🌍 Explorer**: Discover textile traditions around the world
+  - **🧶 Designer**: Create your own stitch patterns.
+  - **🌍 Explorer**: Discover textile traditions around the world.
 
 ---
 
@@ -21,8 +21,8 @@ Choose your mode and customize your creative canvas:
   - Crochet
   - Knit
   - Colour
-- **Grid Size**: Set your own dimensions (e.g. 25x25)
-- Tap "Generate grid" to open a working grid
+- **Grid Size**: Set your own dimensions (e.g. 25x25).
+- Tap "Generate grid" to open a working grid.
 
 ---
 
@@ -42,8 +42,8 @@ Design your stitch pattern with ease:
 
 Explore the textile traditions of the world:
 
-- Interactive map with tappable region markers
-- Regions are defined in a local JSON file
+- Interactive map with tappable region markers.
+- Regions are defined in a local JSON file.
 - Tap a marker to view full details, including:
   - Region
   - Countries
