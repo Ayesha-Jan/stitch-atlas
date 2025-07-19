@@ -33,7 +33,8 @@ Design your stitch pattern with ease:
 - **Undo / Redo** support.
 - **Zoom slider** for grid magnification.
 - **Stitch Palette**: Choose symbols for Knit/Crochet modes.
-- **Color Picker**: Select colors for Color mode.
+- **Colour Picker**: Select colours for Colour mode.
+- **Save Grid as Image**: Export your design as an image to share or store.
 
 ---
 
