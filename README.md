@@ -94,5 +94,6 @@ Knit symbol graphics by [@marnen](https://github.com/marnen/knitting_symbols)! T
 
 ## Author
 
-Developed by: Ayesha A. Jan  
-Email: Ayesha.Jan@stud.srh-campus-berlin.de  
+Developed by: Ayesha A. Jan
+Email: Ayesha.Jan@stud.srh-campus-berlin.de
+🎓 BST Operating Systems Project – 2025 
