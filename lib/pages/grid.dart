@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_svg/svg.dart';
 import 'drawer.dart';
 import 'mode.dart';
+
+import 'package:flutter/services.dart';
+import 'dart:ui' as ui;
 
 class Grid extends StatefulWidget {
   final Mode selectedMode;
@@ -22,6 +26,7 @@ class Grid extends StatefulWidget {
 
 class _GridState extends State<Grid> {
 
+  final GlobalKey _gridKey = GlobalKey();
   final TransformationController _transformationController = TransformationController();
 
   int generatedWidth = 8;
@@ -145,6 +150,22 @@ class _GridState extends State<Grid> {
     }
   }
 
+  Future<void> saveGridAsImage() async {
+    try {
+      RenderRepaintBoundary boundary = _gridKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      final channel = MethodChannel('com.example.grid');
+      final result = await channel.invokeMethod('saveImageToGallery', {'bytes': pngBytes});
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Saved to gallery!")));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error saving image: $e")));
+    }
+  }
+
   Widget buildSymbolDropdown(List<Map<String, String>> symbols, String modeName) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -240,6 +261,16 @@ class _GridState extends State<Grid> {
                       ),
                     ],
                   ),
+
+                  ElevatedButton(
+                    onPressed: saveGridAsImage,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFDCE7FB),
+                      foregroundColor: Color(0xFFEA467E),
+                    ),
+                    child: Text("Save Grid as Image"),
+                  ),
+
                   //zoom
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -271,168 +302,171 @@ class _GridState extends State<Grid> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: InteractiveViewer(
-                      constrained: false,
-                      boundaryMargin: EdgeInsets.all(20),
-                      minScale: 0.2,
-                      maxScale: 5.0,
-                      scaleEnabled: false,
-                      transformationController: _transformationController,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // TOP COLUMN LABELS
-                            Row(
-                              children: [
-                                const SizedBox(width: 32, height: 32), // top-left spacer
-                                ...List.generate(
-                                  generatedWidth,
-                                      (col) => Container(
-                                    width: cellSize,
-                                    height: cellSize,
-                                    alignment: Alignment.center,
-                                    child: FittedBox(
-                                      child: Text(
-                                        '${col + 1}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 32), // optional padding after last column
-                              ],
-                            ),
-
-                            // GRID WITH LEFT/RIGHT LABELS
-                            ...List.generate(generatedHeight, (row) {
-                              return Row(
-                                mainAxisSize: MainAxisSize.min,
+                    child: RepaintBoundary(
+                      key: _gridKey,
+                      child: InteractiveViewer(
+                        constrained: false,
+                        boundaryMargin: EdgeInsets.all(20),
+                        minScale: 0.2,
+                        maxScale: 5.0,
+                        scaleEnabled: false,
+                        transformationController: _transformationController,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // TOP COLUMN LABELS
+                              Row(
                                 children: [
-                                  // Left row number
-                                  Container(
-                                    width: 32,
-                                    height: cellSize,
-                                    alignment: Alignment.center,
-                                    child: FittedBox(
-                                      child: Text(
-                                        '${generatedHeight - row}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Grid cells
-                                  ...List.generate(generatedWidth, (col) {
-                                    return GestureDetector(
-                                      onTap: () => _handleCellTap(row, col),
-                                      child: Container(
-                                        width: cellSize,
-                                        height: cellSize,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[200],
-                                          border: Border.all(
-                                            color: Colors.pink.shade100,
-                                            width: 0.5,
+                                  const SizedBox(width: 32, height: 32), // top-left spacer
+                                  ...List.generate(
+                                    generatedWidth,
+                                        (col) => Container(
+                                      width: cellSize,
+                                      height: cellSize,
+                                      alignment: Alignment.center,
+                                      child: FittedBox(
+                                        child: Text(
+                                          '${col + 1}',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
                                           ),
                                         ),
-                                        alignment: Alignment.center,
-                                        child: Builder(
-                                          builder: (_) {
-                                            final symbolName = grid[row][col];
-
-                                            if (symbolName.isEmpty) {
-                                              return SizedBox.shrink();
-                                            }
-
-                                            if (symbolName.startsWith('#')) {
-                                              return Container(
-                                                width: cellSize,
-                                                height: cellSize,
-                                                decoration: BoxDecoration(
-                                                  color: hexToColor(symbolName),
-                                                ),
-                                              );
-                                            }
-
-                                            final crochetMatch = crochetSymbols.firstWhere(
-                                                  (s) => s["name"] == symbolName,
-                                              orElse: () => {},
-                                            );
-
-                                            final knitMatch = knitSymbols.firstWhere(
-                                                  (s) => s["name"] == symbolName,
-                                              orElse: () => {},
-                                            );
-
-                                            final filePath = crochetMatch["file"] ?? knitMatch["file"];
-
-                                            if (filePath == null || filePath.isEmpty) {
-                                              return Icon(Icons.error, size: cellSize * 0.5);
-                                            }
-
-                                            return SvgPicture.asset(
-                                              filePath,
-                                              width: cellSize * 0.8,
-                                              height: cellSize * 0.8,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  }),
-
-                                  // Right row number
-                                  Container(
-                                    width: 32,
-                                    height: cellSize,
-                                    alignment: Alignment.center,
-                                    child: FittedBox(
-                                      child: Text(
-                                        '${generatedHeight - row}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
                                       ),
                                     ),
                                   ),
+                                  const SizedBox(width: 32), // optional padding after last column
                                 ],
-                              );
-                            }),
-
-                            // BOTTOM COLUMN LABELS
-                            Row(
-                              children: [
-                                const SizedBox(width: 32, height: 32), // bottom-left spacer
-                                ...List.generate(
-                                  generatedWidth,
-                                      (col) => Container(
-                                    width: cellSize,
-                                    height: cellSize,
-                                    alignment: Alignment.center,
-                                    child: FittedBox(
-                                      child: Text(
-                                        '${col + 1}',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                      
+                              // GRID WITH LEFT/RIGHT LABELS
+                              ...List.generate(generatedHeight, (row) {
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Left row number
+                                    Container(
+                                      width: 32,
+                                      height: cellSize,
+                                      alignment: Alignment.center,
+                                      child: FittedBox(
+                                        child: Text(
+                                          '${generatedHeight - row}',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                      
+                                    // Grid cells
+                                    ...List.generate(generatedWidth, (col) {
+                                      return GestureDetector(
+                                        onTap: () => _handleCellTap(row, col),
+                                        child: Container(
+                                          width: cellSize,
+                                          height: cellSize,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            border: Border.all(
+                                              color: Colors.pink.shade100,
+                                              width: 0.5,
+                                            ),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Builder(
+                                            builder: (_) {
+                                              final symbolName = grid[row][col];
+                      
+                                              if (symbolName.isEmpty) {
+                                                return SizedBox.shrink();
+                                              }
+                      
+                                              if (symbolName.startsWith('#')) {
+                                                return Container(
+                                                  width: cellSize,
+                                                  height: cellSize,
+                                                  decoration: BoxDecoration(
+                                                    color: hexToColor(symbolName),
+                                                  ),
+                                                );
+                                              }
+                      
+                                              final crochetMatch = crochetSymbols.firstWhere(
+                                                    (s) => s["name"] == symbolName,
+                                                orElse: () => {},
+                                              );
+                      
+                                              final knitMatch = knitSymbols.firstWhere(
+                                                    (s) => s["name"] == symbolName,
+                                                orElse: () => {},
+                                              );
+                      
+                                              final filePath = crochetMatch["file"] ?? knitMatch["file"];
+                      
+                                              if (filePath == null || filePath.isEmpty) {
+                                                return Icon(Icons.error, size: cellSize * 0.5);
+                                              }
+                      
+                                              return SvgPicture.asset(
+                                                filePath,
+                                                width: cellSize * 0.8,
+                                                height: cellSize * 0.8,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                      
+                                    // Right row number
+                                    Container(
+                                      width: 32,
+                                      height: cellSize,
+                                      alignment: Alignment.center,
+                                      child: FittedBox(
+                                        child: Text(
+                                          '${generatedHeight - row}',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                      
+                              // BOTTOM COLUMN LABELS
+                              Row(
+                                children: [
+                                  const SizedBox(width: 32, height: 32), // bottom-left spacer
+                                  ...List.generate(
+                                    generatedWidth,
+                                        (col) => Container(
+                                      width: cellSize,
+                                      height: cellSize,
+                                      alignment: Alignment.center,
+                                      child: FittedBox(
+                                        child: Text(
+                                          '${col + 1}',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 32), // optional right padding
-                              ],
-                            ),
-                          ],
+                                  const SizedBox(width: 32), // optional right padding
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -447,95 +481,95 @@ class _GridState extends State<Grid> {
             else if (selectedMode == Mode.knit)
               buildSymbolDropdown(knitSymbols, "knit")
             else if (selectedMode == Mode.colour)
-              Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text("Pick a Color"),
-                            content: SingleChildScrollView(
-                              child: ColorPicker(
-                                pickerColor: selectedColor,
-                                onColorChanged: (color) {
-                                  selectedColor = color;
-                                },
-                                enableAlpha: false,
-                                pickerAreaHeightPercent: 0.7,
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Pick a Color"),
+                              content: SingleChildScrollView(
+                                child: ColorPicker(
+                                  pickerColor: selectedColor,
+                                  onColorChanged: (color) {
+                                    selectedColor = color;
+                                  },
+                                  enableAlpha: false,
+                                  pickerAreaHeightPercent: 0.7,
+                                ),
                               ),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text("Select"),
-                                onPressed: () {
-                                  // Add to recent colors
-                                  if (!recentColors.contains(selectedColor)) {
-                                    recentColors.insert(0, selectedColor);
-                                    if (recentColors.length > 10) {
-                                      recentColors = recentColors.sublist(0, 10);
+                              actions: [
+                                TextButton(
+                                  child: Text("Select"),
+                                  onPressed: () {
+                                    // Add to recent colors
+                                    if (!recentColors.contains(selectedColor)) {
+                                      recentColors.insert(0, selectedColor);
+                                      if (recentColors.length > 10) {
+                                        recentColors = recentColors.sublist(0, 10);
+                                      }
                                     }
-                                  }
-                                  setState(() {});
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFDCE7FB),
-                      foregroundColor: Color(0xFFEA467E),
-                      padding: EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 20,
-                      ),
-                      minimumSize: Size(100, 50),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
-                              color: Color(0xFFEA467E),
-                              width: 2
+                                    setState(() {});
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFDCE7FB),
+                          foregroundColor: Color(0xFFEA467E),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 20,
+                          ),
+                          minimumSize: Size(100, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(
+                                  color: Color(0xFFEA467E),
+                                  width: 2
+                              )
                           )
-                      )
+                      ),
+                      child: Text(
+                          "Pick a Color",
+                          style: TextStyle(
+                            fontSize: 17,
+                          )
+                      ),
                     ),
-                    child: Text(
-                      "Pick a Color",
-                      style: TextStyle(
-                        fontSize: 17,
-                      )
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: recentColors.map((color) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedColor = color;
-                          });
-                        },
-                        child: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: selectedColor == color ? Colors.black : Colors.white,
-                              width: 2,
+                    SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: recentColors.map((color) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedColor = color;
+                            });
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: selectedColor == color ? Colors.black : Colors.white,
+                                width: 2,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
             Image.asset(
               'assets/images/designs/string_flipped.png',
               width: double.infinity,
