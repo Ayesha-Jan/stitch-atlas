@@ -1,4 +1,4 @@
-# 🧶🗺️ Stitch Atlas
+# 🧶🌍 Stitch Atlas
 
 **Stitch Atlas** is a Flutter app that celebrates global textile traditions while giving users a creative space to design their own stitch patterns. Whether you're an artist, a fiber nerd, or a cultural explorer, Stitch Atlas lets you map, learn, and make.
 
