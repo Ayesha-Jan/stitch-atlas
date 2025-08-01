@@ -56,7 +56,7 @@ class Home extends StatelessWidget {
                     backgroundColor: Color(0xFFDCE7FB),
                     foregroundColor: Color(0xFFEA467E),
                     padding: EdgeInsets.symmetric(
-                      vertical: 24,
+                      vertical: 16,
                       horizontal: 30
                     ),
                     minimumSize: Size(200, 70),
@@ -69,8 +69,8 @@ class Home extends StatelessWidget {
                     )
                   ),
                   child: Text(
-                    "Go to Designer Page",
-                    style: TextStyle(fontSize: 25),
+                    "Go to Designer",
+                    style: TextStyle(fontSize: 30),
                   ),
                 ),
 
@@ -101,7 +101,7 @@ class Home extends StatelessWidget {
                     backgroundColor: Color(0xFFDCE7FB),
                     foregroundColor: Color(0xFFEA467E),
                     padding: EdgeInsets.symmetric(
-                        vertical: 24,
+                        vertical: 16,
                         horizontal: 30
                     ),
                     minimumSize: Size(200, 70),
@@ -114,11 +114,11 @@ class Home extends StatelessWidget {
                     )
                   ),
                   child: Text(
-                    "Go to Explorer Page",
-                    style: TextStyle(fontSize: 25),
+                    "Go to Explorer",
+                    style: TextStyle(fontSize: 30),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 25),
                 Image.asset(
                   'assets/images/designs/string_flipped.png',
                   width: double.infinity,
